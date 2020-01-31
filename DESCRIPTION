@@ -1,0 +1,21 @@
+Package: ncovr
+Version: 0.0.1
+Date: 2020-01-31
+Title: Read and process nCoV data
+Authors@R: c(
+    person("Peng", "Zhao", role = c("aut", "cre"), email = "pzhao@pzhao.net")
+  )
+Maintainer: Peng Zhao <pzhao@pzhao.net>
+Depends: R (>= 3.6.1)
+Imports: 
+  httr,
+  jsonlite
+Suggests:
+Description: Read and process nCoV data
+License: GPL-3 | file LICENSE
+URL: https://github.com/pzhaonet/ncovr
+BugReports: https://github.com/pzhaonet/ncovr/issues
+SystemRequirements: pandoc (>= 2.0; https://pandoc.org)
+RoxygenNote: 7.0.2
+NeedsCompilation: no
+LazyData: true
