@@ -27,7 +27,7 @@ get_ncov <- function(port = c('area', 'overall', 'provinceName', 'news', 'rumors
     names(ncov) <- port
   }
   if(method == 'ncovr'){
-    ncov <- readRDS('https://raw.githubusercontent.com/pzhaonet/ncovr/master/inst2/ncov_tidy.RDS')
+    ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/ncovr/raw/master/inst2/ncov_tidy.RDS')))
   }
   ncov
 }
