@@ -4,7 +4,8 @@ conv_time <- function(x){
 
 #' Get NCoV data
 #'
-#' @param port character. The port(s).
+#' @param method character.
+#' @param port character. The port(s). Valid only for the 'api' method
 #' @param base character. The link of the database api.
 #'
 #' @return a list
@@ -12,11 +13,16 @@ conv_time <- function(x){
 #'
 #' @examples
 #' get_ncov('overall')
-get_ncov <- function(port = c('area', 'overall', 'provinceName', 'news', 'rumors'),
-                     method = c('ncovr', 'api'),
+get_ncov <- function(method = c('ncovr', 'tidy', 'api'),
+                     port = c('area', 'overall', 'provinceName', 'news', 'rumors'),
                      base = 'https://lab.isaaclin.cn/nCoV/api/'){
-  # port <- match.arg(port)
   method <- match.arg(method)
+  if(method == 'tidy'){
+    ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/travis-ncov/raw/master/data/ncov_tidy.RDS')))
+  }
+  if(method == 'ncovr'){
+    ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/travis-ncov/raw/master/data/ncov.RDS')))
+  }
   if(method == 'api'){
     ncov <- lapply(port,
                    function(x) {
@@ -25,9 +31,6 @@ get_ncov <- function(port = c('area', 'overall', 'provinceName', 'news', 'rumors
                      jsonlite::fromJSON(get_text)$results
                    })
     names(ncov) <- port
-  }
-  if(method == 'ncovr'){
-    ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/ncovr/raw/master/inst2/ncov_tidy.RDS')))
   }
   ncov
 }
@@ -55,10 +58,3 @@ conv_ncov <- function(ncov){
   ncov$area <- dplyr::bind_rows(ncov_area$cities)
   ncov
 }
-
-# Sys.setlocale('LC_CTYPE', 'Chinese')
-# ncov <- get_ncov(port = c('area?latest=0', 'overall', 'provinceName', 'news', 'rumors'))
-# names(ncov)[1] <- 'area'
-# ncov_tidy <- conv_ncov(ncov)
-# saveRDS(ncov_tidy, 'inst2/ncov_tidy.RDS')
-# saveRDS(ncov, 'inst2/ncov.RDS')
