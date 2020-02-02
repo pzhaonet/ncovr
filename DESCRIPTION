@@ -1,6 +1,6 @@
 Package: ncovr
-Version: 0.0.1
-Date: 2020-01-31
+Version: 0.0.2
+Date: 2020-02-02
 Title: Read and process nCoV data
 Authors@R: c(
     person("Peng", "Zhao", role = c("aut", "cre"), email = "pzhao@pzhao.net")
@@ -9,7 +9,11 @@ Maintainer: Peng Zhao <pzhao@pzhao.net>
 Depends: R (>= 3.2)
 Imports: 
   httr,
-  jsonlite
+  jsonlite,
+  leaflet,
+  leafletCN,
+  magrittr,
+  dplyr
 Suggests:
 Description: Read and process nCoV data
 License: GPL-3 | file LICENSE
