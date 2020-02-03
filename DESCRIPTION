@@ -1,6 +1,6 @@
 Package: ncovr
-Version: 0.0.2
-Date: 2020-02-02
+Version: 0.0.3
+Date: 2020-02-03
 Title: Read and process nCoV data
 Authors@R: c(
     person("Peng", "Zhao", role = c("aut", "cre"), email = "pzhao@pzhao.net")

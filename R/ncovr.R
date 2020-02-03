@@ -13,7 +13,7 @@ conv_time <- function(x){
 #'
 #' @examples
 #' get_ncov('overall')
-get_ncov <- function(method = c('ncovr', 'tidy', 'api'),
+get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china'),
                      port = c('area', 'overall', 'provinceName', 'news', 'rumors'),
                      base = 'https://lab.isaaclin.cn/nCoV/api/'){
   method <- match.arg(method)
@@ -31,6 +31,11 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api'),
                      jsonlite::fromJSON(get_text)$results
                    })
     names(ncov) <- port
+  }
+  if(method == 'china'){
+    ncov <- jsonlite::fromJSON('https://raw.githubusercontent.com/JackieZheng/2019-nCoV/master/Json/data.json')
+    ncov[, 2:9] <- apply(ncov[,2:9], c(1,2), as.numeric)
+    ncov[, 1] <- as.Date(ncov[, 1])
   }
   ncov
 }
@@ -232,7 +237,7 @@ plot_map <- function(ncov,
   ncov$key <- ncov[, key]
 
   ncov_city <- dplyr::bind_rows(ncov$cities) %>% dplyr::select(1:5)
-  ncov_area <- ncov[, 3:7]
+  ncov_area <- ncov[, 2:6]
   names(ncov_area) <- names(ncov_city)
   ncov_cities <- rbind(ncov_city, ncov_area)
   cities <- leafletCN::regionNames(mapName = 'city')
