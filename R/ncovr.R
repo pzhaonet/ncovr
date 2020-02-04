@@ -1,7 +1,3 @@
-conv_time <- function(x){
-  as.POSIXct('1970-01-01', tz = 'GMT') + x / 1000
-}
-
 #' Get NCoV data
 #'
 #' @param method character.
@@ -342,8 +338,6 @@ plot_map <- function(x,
   mymap
 }
 
-
-
 #' Predict
 #'
 #' @param province province short name
@@ -356,8 +350,7 @@ plot_map <- function(x,
 #' @examples
 #' Sys.setlocale('LC_CTYPE', 'Chinese')
 #' ncov <- get_ncov()#Get the data
-#' myfig <- predict_date(province = "广东", ncov = ncov)
-
+#' myfig <- predict_date(province = "provincenameinchinease", ncov = ncov)
 predict_date <- function(province, ncov = ncov, ifplot = TRUE){
   #Dataset For a specific area
   Area <- ncov$area
@@ -427,4 +420,8 @@ predict_date <- function(province, ncov = ncov, ifplot = TRUE){
 
   }
   return(list(enddate = END, tomorrow = Dseq[nrow(RegionDat)+1], tomorrowcount = Predict))
+}
+
+conv_time <- function(x){
+  as.POSIXct('1970-01-01', tz = 'GMT') + x / 1000
 }

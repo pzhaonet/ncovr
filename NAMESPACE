@@ -3,4 +3,5 @@
 export(geojsonMap_legendless)
 export(get_ncov)
 export(plot_map)
+export(predict_date)
 importFrom(magrittr,"%>%")
