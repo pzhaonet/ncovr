@@ -393,7 +393,7 @@ predict_date <- function(province, ncov = ncov, ifplot = TRUE, addtitle = NA){
       #Plot the results
       myplot <- function(){
         par(mgp = c(2.5, 1, 0))
-        with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab="Number of cases",xlab="",bty='n',xaxt = "n"));title(ifelse(is.na(addtitle, '', Region_name)))
+        with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab="Number of cases",xlab="",bty='n',xaxt = "n"));title(ifelse(is.na(addtitle), '', Region_name))
 
         with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
 
