@@ -373,53 +373,59 @@ predict_date <- function(province, ncov = ncov, ifplot = TRUE){
   Length <- round(2.2*nrow(RegionDat),0)
   Dseq <- format(seq(RegionDat$Date[1], by = "day", length.out = Length ),"%m-%d")
 
+  END <- NA
+  Predict <- NA
+
   #Model logistic regression
-  md <- nls(confirmedCount~SSlogis(Day, Asym, xmid, scal),data= RegionDat)
-  Coe <- summary(md)$coefficients
-  a <- Coe[1,1]
-  xmax <-  2*Coe[2,1]
+  if(class(try(nls(confirmedCount~SSlogis(Day, Asym, xmid, scal),data= RegionDat), silent = TRUE)) != "try-error"){
+    md <- nls(confirmedCount~SSlogis(Day, Asym, xmid, scal),data= RegionDat)
+    Coe <- summary(md)$coefficients
+    a <- Coe[1,1]
+    xmax <-  2*Coe[2,1]
 
-  #End date
-  END <- Dseq [round(xmax,0)]
-  #Predict
-  Input=nrow(RegionDat)+1
-  Predict <- round(a/(1+exp((Coe[2,1]-Input)/Coe[3,1])),0)
+    #End date
+    END <- Dseq [round(xmax,0)]
+    #Predict
+    Input=nrow(RegionDat)+1
+    Predict <- round(a/(1+exp((Coe[2,1]-Input)/Coe[3,1])),0)
 
-  if(ifplot){
-    #Plot the results
-    myplot <- function(){
-      par(mgp = c(2.5, 1, 0))
-      with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab="Number of cases",xlab="",bty='n',xaxt = "n"));title(Region_name)
+    if(ifplot){
+      #Plot the results
+      myplot <- function(){
+        par(mgp = c(2.5, 1, 0))
+        with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab="Number of cases",xlab="",bty='n',xaxt = "n"));title(Region_name)
 
-      with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
+        with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
 
-      #Smooth predict line
-      PredS <- seq(0, 1.3*xmax, length = 100)
-      lines(PredS, predict(md, list(Day = PredS )),col="red")
+        #Smooth predict line
+        PredS <- seq(0, 1.3*xmax, length = 100)
+        lines(PredS, predict(md, list(Day = PredS )),col="red")
 
-      #The daily increase case
-      Lth<- round(1.3*xmax,0)
-      newdat <- data.frame(Pred=1:Lth)
-      newdat <- within(newdat, ypred <- predict(md,  list(Day = Pred )))
-      newdat$Prednew <- with(newdat,ypred-c(0,ypred[-nrow(newdat)]))
-      lines(x=newdat$Pred,y=newdat$Prednew,col="blue")
+        #The daily increase case
+        Lth<- round(1.3*xmax,0)
+        newdat <- data.frame(Pred=1:Lth)
+        newdat <- within(newdat, ypred <- predict(md,  list(Day = Pred )))
+        newdat$Prednew <- with(newdat,ypred-c(0,ypred[-nrow(newdat)]))
+        lines(x=newdat$Pred,y=newdat$Prednew,col="blue")
 
-      axis(1, at=1:Length , labels=Dseq,cex.axis = 0.6,las=2)
+        axis(1, at=1:Length , labels=Dseq,cex.axis = 0.6,las=2)
 
-      points(2,0.8*a)
-      text(3,0.8*a,"Confirmed",cex=0.8,adj=0)
-      segments(1.5,0.7*a,2.5,0.7*a,col="red")
-      text(3,0.7*a,"Model fit",cex=0.8,adj=0)
-      points(2,0.6*a,col="grey",pch=19)
-      text(3,0.6*a,"Daily increase",cex=0.8,adj=0)
+        points(2,0.8*a)
+        text(3,0.8*a,"Confirmed",cex=0.8,adj=0)
+        segments(1.5,0.7*a,2.5,0.7*a,col="red")
+        text(3,0.7*a,"Model fit",cex=0.8,adj=0)
+        points(2,0.6*a,col="grey",pch=19)
+        text(3,0.6*a,"Daily increase",cex=0.8,adj=0)
 
-      segments(0,a,xmax,a,lty="dotted")
-      segments(xmax,0,xmax,a,lty="dotted")
+        segments(0,a,xmax,a,lty="dotted")
+        segments(xmax,0,xmax,a,lty="dotted")
+      }
+
+      return(list(area = province, enddate = END, tomorrow = Dseq[nrow(RegionDat)+1], tomorrowcount = Predict, fig = myplot()))
+
     }
-    return(list(fig = myplot(), enddate = END, tomorrow = Dseq[nrow(RegionDat)+1], tomorrowcount = Predict))
-
   }
-  return(list(enddate = END, tomorrow = Dseq[nrow(RegionDat)+1], tomorrowcount = Predict))
+  return(list(area = province, enddate = END, tomorrow = Dseq[nrow(RegionDat)+1], tomorrowcount = Predict))
 }
 
 conv_time <- function(x){
