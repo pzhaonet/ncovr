@@ -222,7 +222,7 @@ geojsonMap_legendless = function(dat,
 #' @examples
 #' ncov <- get_ncov()
 #' plot_map(ncov)
-plot_map <- function(ncov,
+plot_map <- function(x,
                      key = c("confirmedCount", "suspectedCount", "curedCount", "deadCount"),
                      filter = 'unkown',
                      legend_title ='Confirmed',
@@ -233,106 +233,198 @@ plot_map <- function(ncov,
   scale <- match.arg(scale)
   method <- match.arg(method)
 
-  ncov <- ncov[ncov$provinceName != filter,]
-  ncov$key <- ncov[, key]
+  count_cut <- c(0, 9, 99, 999, Inf)
 
-  ncov_city <- dplyr::bind_rows(ncov$cities) %>% dplyr::select(1:5)
-  ncov_area <- ncov[, 2:6]
-  names(ncov_area) <- names(ncov_city)
-  ncov_cities <- rbind(ncov_city, ncov_area)
-  cities <- leafletCN::regionNames(mapName = 'city')
-  ncov_cities <- ncov_cities[ncov_cities$cityName %in% cities, ]
-  ncov_cities$key <- ncov_cities[, key]
-  if(scale == "cat") {
-    count_cut <- c(0, 9, 99, 999, Inf)
+  x <- x[x$provinceName != filter,]
+  x$key <- x[, key]
 
-    if(method == "province"){
-      ncov$key_level <- cut(
-        ncov$key,
+  if(method == "province"){
+    if(scale == "cat") {
+      x$key_level <- cut(
+        x$key,
         count_cut,
         labels = c('< 10', '10-99', '100-999', '>999'))
       mymap <-
-      leafletCN::geojsonMap(
-        dat = ncov,
-        mapName = "china",
-        colorMethod = "factor",
-        palette=color,
-        namevar = ~provinceName,
-        valuevar = ~key_level,
-        popup =  paste(
-          ncov$provinceName,
-          ncov$key),
-        legendTitle = legend_title)
+        leafletCN::geojsonMap(
+          dat = x,
+          mapName = "china",
+          colorMethod = "factor",
+          palette=color,
+          namevar = ~provinceName,
+          valuevar = ~key_level,
+          popup =  paste(
+            x$provinceName,
+            x$key),
+          legendTitle = legend_title)
     }
-
-    if(method == "city") {
-      ncov_cities$key_level <- cut(
-        ncov_cities[, key],
-        count_cut,
-        labels = c('< 10', '10-99', '100-999', '>999'))
-      mymap <- leafletCN::geojsonMap(
-        dat = ncov_cities,
-        mapName = "city",
-        colorMethod = "factor",
-        palette=color,
-        namevar = ~cityName,
-        valuevar = ~key_level,
-        popup =  paste(
-          ncov_cities$cityName,
-          ncov_cities$key),
-        legendTitle = legend_title)
-    }
-  }
-
-  if(scale == 'log'){
-    if(method == "province"){
-      ncov$key_log <- log10(ncov$key)
-      ncov$key_log[ncov$key == 0] <- NA
-      mymap <- geojsonMap_legendless(
-        dat = ncov,
+    if(scale == 'log'){
+      x$key_log <- log10(x$key)
+      x$key_log[x$key == 0] <- NA
+      mymap <-
+        geojsonMap_legendless(
+        dat = x,
         mapName = "china",
         palette = color,
         namevar = ~provinceName,
         valuevar = ~key_log,
         popup =  paste(
-          ncov$provinceName,
-          ncov$key)) %>%
-       leaflet::addLegend(
+          x$provinceName,
+          x$key)) %>%
+        leaflet::addLegend(
           "bottomright",
-          bins = 5,
+          bins = 4,
           pal = leaflet::colorNumeric(
             palette = color,
-            domain = ncov$key_log
+            domain = x$key_log
           ),
-          values = ncov$key_log,
+          values = x$key_log,
           title = legend_title,
           labFormat = leaflet::labelFormat(
+            digits = 0,
             transform = function(x) 10 ^ x),
           opacity = 1)
     }
-    if(method == "city"){
-      ncov_cities$key_log <- log10(ncov_cities$key)
-      ncov_cities$key_log[ncov_cities$key == 0] <- NA
+  }
+
+  if(method == "city") {
+    x_city <- dplyr::bind_rows(x$cities)
+    if(nrow(x_city) != 0) x_city <- x_city[, 1:5]
+    x_area <- x[, 2:6]
+    names(x_area)[1] <- 'cityName'
+    x_cities <- rbind(x_city, x_area)
+    cities <- leafletCN::regionNames(mapName = 'city')
+    x_cities <- x_cities[x_cities$cityName %in% cities, ]
+    x_cities[, 'key'] <- x_cities[, key]
+
+    if(scale == 'cat'){
+      x_cities$key_level <- cut(
+        unlist(x_cities[, key]),
+        count_cut,
+        labels = c('< 10', '10-99', '100-999', '>999'))
+      mymap <- leafletCN::geojsonMap(
+        dat = as.data.frame(x_cities),
+        mapName = "city",
+        colorMethod = "factor",
+        palette=color,
+        namevar = ~cityName,
+        valuevar = ~key_level,
+        popup =  paste(
+          x_cities$cityName,
+          x_cities$key),
+        legendTitle = legend_title)
+    }
+    if(scale == 'log'){
+      x_cities$key_log <- log10(x_cities$key)
+      x_cities$key_log[x_cities$key == 0] <- NA
       mymap <- geojsonMap_legendless(
-        dat = as.data.frame(ncov_cities),
+        dat = as.data.frame(x_cities),
         mapName = "city",
         palette = color,
         namevar = ~cityName,
         valuevar = ~key_log,
-        popup =  paste(ncov_cities$cityName,
-                       ncov_cities$key)) %>%
+        popup =  paste(x_cities$cityName,
+                       x_cities$key)) %>%
         leaflet::addLegend(
           "bottomright",
-          bins = 5,
+          bins = 4,
           pal = leaflet::colorNumeric(
             palette = color,
-            domain = ncov_cities$key_log),
-          values = ncov_cities$key_log,
+            domain = x_cities$key_log
+            ),
+          values = x_cities$key_log,
           title = legend_title,
           labFormat = leaflet::labelFormat(
+            digits = 0,
             transform = function(x) 10 ^ x),
           opacity = 1)
     }
   }
   mymap
+}
+
+
+
+#' Predict
+#'
+#' @param province province short name
+#' @param ncov ncov data
+#' @param ifplot logic.
+#'
+#' @return a figure.
+#' @export
+#'
+#' @examples
+#' Sys.setlocale('LC_CTYPE', 'Chinese')
+#' ncov <- get_ncov()#Get the data
+#' myfig <- predict_date(province = "广东", ncov = ncov)
+
+predict_date <- function(province, ncov = ncov, ifplot = TRUE){
+  #Dataset For a specific area
+  Area <- ncov$area
+  Area$updateTime <- ncovr:::conv_time(Area$updateTime)#Correct the time
+
+  Region_all <- unique(Area$provinceShortName)
+  Region_name <- Region_all[match(province, Region_all)]#Match regional name
+  Region <- subset(Area,provinceShortName==Region_name)
+
+  RegionTime <- aggregate(confirmedCount~updateTime,data=Region,sum)
+
+  RegionTime$Date <- format(RegionTime$updateTime,"%m-%d")
+
+  RegionDat <- aggregate(confirmedCount~Date,data=RegionTime,max)
+
+  #No data availalbe for specific date
+  RegionDat$Day <- 1:nrow(RegionDat)
+  RegionDat$New <- with(RegionDat,confirmedCount-c(0,confirmedCount[-nrow(RegionDat)]))
+  RegionDat$Date <-  as.Date(RegionDat$Date,"%m-%d")
+  Length <- round(2.2*nrow(RegionDat),0)
+  Dseq <- format(seq(RegionDat$Date[1], by = "day", length.out = Length ),"%m-%d")
+
+  #Model logistic regression
+  md <- nls(confirmedCount~SSlogis(Day, Asym, xmid, scal),data= RegionDat)
+  Coe <- summary(md)$coefficients
+  a <- Coe[1,1]
+  xmax <-  2*Coe[2,1]
+
+  #End date
+  END <- Dseq [round(xmax,0)]
+  #Predict
+  Input=nrow(RegionDat)+1
+  Predict <- round(a/(1+exp((Coe[2,1]-Input)/Coe[3,1])),0)
+
+  if(ifplot){
+    #Plot the results
+    myplot <- function(){
+      par(mgp = c(2.5, 1, 0))
+      with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab="Number of cases",xlab="",bty='n',xaxt = "n"));title(Region_name)
+
+      with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
+
+      #Smooth predict line
+      PredS <- seq(0, 1.3*xmax, length = 100)
+      lines(PredS, predict(md, list(Day = PredS )),col="red")
+
+      #The daily increase case
+      Lth<- round(1.3*xmax,0)
+      newdat <- data.frame(Pred=1:Lth)
+      newdat <- within(newdat, ypred <- predict(md,  list(Day = Pred )))
+      newdat$Prednew <- with(newdat,ypred-c(0,ypred[-nrow(newdat)]))
+      lines(x=newdat$Pred,y=newdat$Prednew,col="blue")
+
+      axis(1, at=1:Length , labels=Dseq,cex.axis = 0.6,las=2)
+
+      points(2,0.8*a)
+      text(3,0.8*a,"Confirmed",cex=0.8,adj=0)
+      segments(1.5,0.7*a,2.5,0.7*a,col="red")
+      text(3,0.7*a,"Model fit",cex=0.8,adj=0)
+      points(2,0.6*a,col="grey",pch=19)
+      text(3,0.6*a,"Daily increase",cex=0.8,adj=0)
+
+      segments(0,a,xmax,a,lty="dotted")
+      segments(xmax,0,xmax,a,lty="dotted")
+    }
+    return(list(fig = myplot(), enddate = END, tomorrow = Dseq[nrow(RegionDat)+1], tomorrowcount = Predict))
+
+  }
+  return(list(enddate = END, tomorrow = Dseq[nrow(RegionDat)+1], tomorrowcount = Predict))
 }

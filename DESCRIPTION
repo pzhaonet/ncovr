@@ -1,5 +1,5 @@
 Package: ncovr
-Version: 0.0.3
+Version: 0.0.4
 Date: 2020-02-03
 Title: Read and process nCoV data
 Authors@R: c(
