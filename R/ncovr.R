@@ -351,7 +351,7 @@ plot_map <- function(x,
 #' Sys.setlocale('LC_CTYPE', 'Chinese')
 #' ncov <- get_ncov()#Get the data
 #' myfig <- predict_date(province = "provincenameinchinease", ncov = ncov)
-predict_date <- function(province, ncov = ncov, ifplot = TRUE){
+predict_date <- function(province, ncov = ncov, ifplot = TRUE, addtitle = NA){
   #Dataset For a specific area
   Area <- ncov$area
   Area$updateTime <- ncovr:::conv_time(Area$updateTime)#Correct the time
@@ -393,7 +393,7 @@ predict_date <- function(province, ncov = ncov, ifplot = TRUE){
       #Plot the results
       myplot <- function(){
         par(mgp = c(2.5, 1, 0))
-        with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab="Number of cases",xlab="",bty='n',xaxt = "n"));title(Region_name)
+        with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab="Number of cases",xlab="",bty='n',xaxt = "n"));title(ifelse(is.na(addtitle, '', Region_name)))
 
         with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
 
