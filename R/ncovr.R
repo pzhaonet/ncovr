@@ -359,21 +359,44 @@ plot_map <- function(x,
 #' @examples
 #' Sys.setlocale('LC_CTYPE', 'Chinese')
 #' ncov <- get_ncov()#Get the data
-#' myfig <- predict_date(province = "provincenameinchinease", ncov = ncov)
-predict_date <- function(province, ncov = ncov, ifplot = TRUE, addtitle = NA){
-  #Dataset For a specific area
-  Area <- ncov$area
-  Area$updateTime <- ncovr:::conv_time(Area$updateTime)#Correct the time
+#' ncovChina <-get_ncov('china')
+#' predict_date(province = "jiangsuinchinese",  ncov = ncov)
+#' predict_date(province = "meiguoinchinese",  ncov = ncov)
+#' predict_date(province = "zhongguoinchinese",  ncov = ncovChina,type="confirmed")
+#' predict_date(province = "zhongguoinchinese",  ncov = ncovChina,type="suspected")
 
-  Region_all <- unique(Area$provinceShortName)
-  Region_name <- Region_all[match(province, Region_all)]#Match regional name
-  Region <- subset(Area,provinceShortName==Region_name)
+predict_date <- function(province, ncov = c(ncov,ncovChina), type="confirmed",ifplot = TRUE, addtitle = NA, ifchinese = FALSE){
+  dic <- readr::read_csv(system.file('dic.csv', package = 'ncovr'))
+  #Dataset for a specific area
+  types <- c("confirmed","suspected")
+  type <- types[match(type, types)]#Match type
+  if (province!=dic$zh[1])
+  {
+    if(type!="confirmed"){warning("type can only be 'confirmed' for province data");break}
+    Area <- ncov$area
+    Area$updateTime <- ncovr:::conv_time(Area$updateTime)#Correct the time
+    Region_all <- unique(Area$provinceShortName)
+    Region_name <- Region_all[match(province, Region_all)]#Match regional name
+    Region <- subset(Area,provinceShortName==Region_name)
+    RegionTime <- aggregate(confirmedCount~updateTime,data=Region,sum)
+    RegionTime$Date <- format(RegionTime$updateTime,"%m-%d")
+    RegionDat <- aggregate(confirmedCount~Date,data=RegionTime,max)
+  }
 
-  RegionTime <- aggregate(confirmedCount~updateTime,data=Region,sum)
+  if (province==dic$zh[1])
+  {
+    DtChina <- ncovChina[-nrow(ncovChina),]
 
-  RegionTime$Date <- format(RegionTime$updateTime,"%m-%d")
+    if(type=="confirmed")
+    {RegionDat <- data.frame(confirmedCount=c(58, 136, 198,
+                                              ncovChina[-nrow(ncovChina),dic$zh[2]]))}
+    if(type=="suspected")
+    {RegionDat <- data.frame(confirmedCount=c(NA, NA, NA,
+                                              ncovChina[-nrow(ncovChina),dic$zh[3]]))}
+    RegionDat$Date <- seq(as.Date("2020-01-17",format="%Y-%m-%d"),
+                          by = "day", length.out = nrow(RegionDat))
 
-  RegionDat <- aggregate(confirmedCount~Date,data=RegionTime,max)
+  }
 
   #No data availalbe for specific date
   RegionDat$Day <- 1:nrow(RegionDat)
@@ -384,9 +407,12 @@ predict_date <- function(province, ncov = ncov, ifplot = TRUE, addtitle = NA){
 
   END <- NA
   Predict <- NA
+  NewIncrease <- NA
 
-  #Model logistic regression
-  if(class(try(nls(confirmedCount~SSlogis(Day, Asym, xmid, scal),data= RegionDat), silent = TRUE)) != "try-error"){
+  # #Model logistic regression
+  an.error.occured <- 0
+  xmax <- NA
+  tryCatch({
     md <- nls(confirmedCount~SSlogis(Day, Asym, xmid, scal),data= RegionDat)
     Coe <- summary(md)$coefficients
     a <- Coe[1,1]
@@ -397,44 +423,71 @@ predict_date <- function(province, ncov = ncov, ifplot = TRUE, addtitle = NA){
     #Predict
     Input=nrow(RegionDat)+1
     Predict <- round(a/(1+exp((Coe[2,1]-Input)/Coe[3,1])),0)
+    #Model fit
 
-    if(ifplot){
-      #Plot the results
-      myplot <- function(){
-        par(mgp = c(2.5, 1, 0))
-        with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab="Number of cases",xlab="",bty='n',xaxt = "n"));title(ifelse(is.na(addtitle), '', Region_name))
+    X1 <- RegionDat[complete.cases(RegionDat$confirmedCount),"confirmedCount"]
+    Y1 <- predict(md,X1)
+    r.sq <- max(cor(X1,Y1),0)^2
 
-        with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
+    #The daily increase case
+    Lth<- round(1*xmax,0)
+    newdat <- data.frame(Pred=1:Lth)
+    newdat <- within(newdat, ypred <- predict(md,  list(Day = Pred )))
+    newdat$Prednew <- with(newdat,ypred-c(0,ypred[-nrow(newdat)]))
+    newdat$Judge <- c(rep("Obs",nrow(RegionDat)),"Tmr",
+                      rep("Pre",nrow(newdat)-nrow(RegionDat)-1))
 
-        #Smooth predict line
-        PredS <- seq(0, 1.3*xmax, length = 100)
-        lines(PredS, predict(md, list(Day = PredS )),col="red")
+    NewIncrease <- round(subset(newdat,Judge=="Tmr")[,"Prednew"],0)
 
-        #The daily increase case
-        Lth<- round(1.3*xmax,0)
-        newdat <- data.frame(Pred=1:Lth)
-        newdat <- within(newdat, ypred <- predict(md,  list(Day = Pred )))
-        newdat$Prednew <- with(newdat,ypred-c(0,ypred[-nrow(newdat)]))
-        lines(x=newdat$Pred,y=newdat$Prednew,col="blue")
+  }, error = function(e) {an.error.occured <<- 1})
 
-        axis(1, at=1:Length , labels=Dseq,cex.axis = 0.6,las=2)
+  if(ifplot & !is.na(xmax)){
+    #Plot the results
+    # myplot <- function(){
+      par(mgp = c(2.5, 1, 0))
+      if(ifchinese) par(family='STKaiti')
+      with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab=ifelse(ifchinese, dic$zh[9], dic$en[9]),xlab="",bty='n',xaxt = "n"));title(province)
 
-        points(2,0.8*a)
-        text(3,0.8*a,"Confirmed",cex=0.8,adj=0)
-        segments(1.5,0.7*a,2.5,0.7*a,col="red")
-        text(3,0.7*a,"Model fit",cex=0.8,adj=0)
-        points(2,0.6*a,col="grey",pch=19)
-        text(3,0.6*a,"Daily increase",cex=0.8,adj=0)
+      with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
+      Length <- round(2*nrow(RegionDat),0)
+      Dseq <- format(seq(RegionDat$Date[1],
+                         by = "day", length.out = Length ),"%m-%d")
+      axis(1, at=1:Length, labels=Dseq,cex.axis = 0.6,las=2)
 
+      Position <- 1
+      points(Position,0.7*a)
+      text(Position+1,0.7*a,ifelse(ifchinese, dic$zh[4], dic$en[4]),cex=0.6,adj=0)
+
+      points(Position,0.6*a,col="grey",pch=19)
+      text(Position+1,0.6*a,ifelse(ifchinese, dic$zh[5], dic$en[5]),cex=0.6,adj=0)
+
+
+      if(an.error.occured == 0 & r.sq>0.90)
+      {
+        with(subset(newdat,Judge=="Obs"),lines(x=Pred,y=ypred,col="red"))
+        with(subset(newdat,Judge=="Pre"),lines(x=Pred,y=ypred,col="red",lty="dotted"))
+        with(subset(newdat,Judge=="Obs"),lines(x=Pred,y=Prednew,col="blue"))
+        with(subset(newdat,Judge=="Pre"),lines(x=Pred,y=Prednew,col="blue",lty="dotted"))
+        with(subset(newdat,Judge=="Tmr"),points(x=Pred,y=ypred,col="red",pch=19))
+        with(subset(newdat,Judge=="Tmr"),points(x=Pred,y=Prednew,col="red",pch=19))
+
+        #Modelling legend
+        points(Position,0.5*a,col="red",pch=19)
+        text(Position+1,0.5*a,ifelse(ifchinese, dic$zh[6], dic$en[6]),cex=0.6,adj=0)
+        segments(Position-0.5,0.4*a,Position+0.5,0.4*a,col="black")
+        text(Position+1,0.4*a,ifelse(ifchinese, dic$zh[7], dic$en[7]),cex=0.6,adj=0)
+        segments(Position-0.5,0.3*a,Position+0.5,0.3*a,col="black",lty="dotted")
+        text(Position+1,0.3*a,ifelse(ifchinese, dic$zh[8], dic$en[8]),cex=0.6,adj=0)
         segments(0,a,xmax,a,lty="dotted")
-        segments(xmax,0,xmax,a,lty="dotted")
       }
-
-      return(list(area = province, enddate = END, tomorrow = Dseq[nrow(RegionDat)+1], tomorrowcount = Predict, fig = myplot()))
-
-    }
+    # }
+  } else {
+    list(area = province,
+         enddate = END,
+         tomorrow = Dseq[nrow(RegionDat)+1],
+         tomorrowcount = Predict,
+         tomorrowNew=NewIncrease)
   }
-  return(list(area = province, enddate = END, tomorrow = Dseq[nrow(RegionDat)+1], tomorrowcount = Predict))
 }
 
 conv_time <- function(x){
