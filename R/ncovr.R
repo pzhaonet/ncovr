@@ -9,8 +9,8 @@
 #'
 #' @examples
 #' get_ncov('overall')
-get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china'),
-                     port = c('area', 'overall', 'provinceName', 'news', 'rumors'),
+get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
+                     port = c('area', 'overall', 'news', 'rumors'),
                      base = 'https://lab.isaaclin.cn/nCoV/api/'){
   method <- match.arg(method)
   if(method == 'tidy'){
@@ -32,6 +32,15 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china'),
     ncov <- jsonlite::fromJSON('https://raw.githubusercontent.com/JackieZheng/2019-nCoV/master/Json/data.json')
     ncov[, 2:9] <- apply(ncov[,2:9], c(1,2), as.numeric)
     ncov[, 1] <- as.Date(ncov[, 1])
+  }
+  if(method == 'csv') {
+    port_upper <- conv_firstletter(port)
+    ncov <- lapply(port_upper,
+                   function(x) {
+                     readr::read_csv(paste0('https://raw.githubusercontent.com/BlankerL/DXY-2019-nCoV-Data/master/DXY', x,'.csv'))
+                   }
+    )
+    names(ncov) <- port
   }
   ncov
 }
@@ -430,4 +439,8 @@ predict_date <- function(province, ncov = ncov, ifplot = TRUE, addtitle = NA){
 
 conv_time <- function(x){
   as.POSIXct('1970-01-01', tz = 'GMT') + x / 1000
+}
+
+conv_firstletter <- function(x){
+  paste(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)), sep="")
 }
