@@ -37,7 +37,7 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
     port_upper <- conv_firstletter(port)
     ncov <- lapply(port_upper,
                    function(x) {
-                     readr::read_csv(paste0('https://raw.githubusercontent.com/BlankerL/DXY-2019-nCoV-Data/master/DXY', x,'.csv'))
+                     readr::read_csv(paste0('https://raw.githubusercontent.com/BlankerL/DXY-2019-nCoV-Data/master/csv/DXY', x,'.csv'))
                    }
     )
     names(ncov) <- port
