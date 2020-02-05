@@ -4,8 +4,8 @@ Date: 2020-02-05
 Title: Read and process nCoV data
 Authors@R: c(
     person("Peng", "Zhao", role = c("aut", "cre"), email = "pzhao@pzhao.net"),
-    person("Yi", "Zou", role = c("aut"))
-)
+    person("Yi", "Zou", role = "aut")
+  )
 Maintainer: Peng Zhao <pzhao@pzhao.net>
 Depends: R (>= 3.2)
 Imports: 
