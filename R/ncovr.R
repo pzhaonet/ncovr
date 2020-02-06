@@ -362,17 +362,13 @@ plot_map <- function(x,
 #' ncovChina <-get_ncov('china')
 #' predict_date(province = "jiangsuinchinese",  ncov = ncov)
 #' predict_date(province = "meiguoinchinese",  ncov = ncov)
-#' predict_date(province = "zhongguoinchinese",  ncov = ncovChina,type="confirmed")
-#' predict_date(province = "zhongguoinchinese",  ncov = ncovChina,type="suspected")
+#' predict_date(province = "zhongguoinchinese",  ncov = ncovChina)
 
-predict_date <- function(province, ncov = c(ncov,ncovChina), type="confirmed",ifplot = TRUE, addtitle = NA, ifchinese = FALSE, fontfamily = NA){
+predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addtitle = NA, ifchinese = FALSE, fontfamily = NA){
   dic <- readr::read_csv(system.file('dic.csv', package = 'ncovr'))
   #Dataset for a specific area
-  types <- c("confirmed","suspected")
-  type <- types[match(type, types)]#Match type
   if (province!=dic$zh[1])
   {
-    if(type!="confirmed"){warning("type can only be 'confirmed' for province data");break}
     Area <- ncov$area
     Area$updateTime <- ncovr:::conv_time(Area$updateTime)#Correct the time
     Region_all <- unique(Area$provinceShortName)
@@ -387,12 +383,8 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), type="confirmed",if
   {
     DtChina <- ncovChina[-nrow(ncovChina),]
 
-    if(type=="confirmed")
-    {RegionDat <- data.frame(confirmedCount=c(58, 136, 198,
-                                              ncovChina[-nrow(ncovChina),dic$zh[2]]))}
-    if(type=="suspected")
-    {RegionDat <- data.frame(confirmedCount=c(NA, NA, NA,
-                                              ncovChina[-nrow(ncovChina),dic$zh[3]]))}
+    RegionDat <- data.frame(confirmedCount=c(58, 136, 198,
+                                             ncovChina[-nrow(ncovChina),dic$zh[2]]))
     RegionDat$Date <- seq(as.Date("2020-01-17",format="%Y-%m-%d"),
                           by = "day", length.out = nrow(RegionDat))
 
@@ -402,16 +394,18 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), type="confirmed",if
   RegionDat$Day <- 1:nrow(RegionDat)
   RegionDat$New <- with(RegionDat,confirmedCount-c(0,confirmedCount[-nrow(RegionDat)]))
   RegionDat$Date <-  as.Date(RegionDat$Date,"%m-%d")
-  Length <- round(2.2*nrow(RegionDat),0)
+  Length <- as.numeric(Sys.Date()-as.Date(RegionDat$Date[1],"%m-%d")+20)#x axis from today to 20 days later
   Dseq <- format(seq(RegionDat$Date[1], by = "day", length.out = Length ),"%m-%d")
 
   END <- NA
   Predict <- NA
   NewIncrease <- NA
+  a <- NA
+  xmax <- NA
+  r.sq <- NA
 
   # #Model logistic regression
   an.error.occured <- 0
-  xmax <- NA
   tryCatch({
     md <- nls(confirmedCount~SSlogis(Day, Asym, xmid, scal),data= RegionDat)
     Coe <- summary(md)$coefficients
@@ -441,45 +435,40 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), type="confirmed",if
 
   }, error = function(e) {an.error.occured <<- 1})
 
-  if(ifplot & !is.na(xmax)){
+  if(ifplot){
     #Plot the results
     # myplot <- function(){
-      par(mgp = c(2.5, 1, 0))
-      if(ifchinese & !is.na(fontfamily)) par(family=fontfamily)
-      with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab=ifelse(ifchinese, dic$zh[9], dic$en[9]),xlab="",bty='n',xaxt = "n"));title(province)
+    par(mgp = c(2.5, 1, 0))
+    if(ifchinese & !is.na(fontfamily)) par(family=fontfamily)
+    with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,Length),ylim=c(0,2*max(confirmedCount)),ylab=ifelse(ifchinese, dic$zh[9], dic$en[9]),xlab="",bty='n',xaxt = "n"))
+    title(province)
+    with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
+    Dseq <- format(seq(RegionDat$Date[1],
+                       by = "day", length.out = Length ),"%m-%d")
+    axis(1, at=1:Length, labels=Dseq,cex.axis = 0.6,las=2)
 
-      with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
-      Length <- round(2*nrow(RegionDat),0)
-      Dseq <- format(seq(RegionDat$Date[1],
-                         by = "day", length.out = Length ),"%m-%d")
-      axis(1, at=1:Length, labels=Dseq,cex.axis = 0.6,las=2)
-
-      Position <- 1
-      points(Position,0.7*a)
-      text(Position+1,0.7*a,ifelse(ifchinese, dic$zh[4], dic$en[4]),cex=0.6,adj=0)
-
-      points(Position,0.6*a,col="grey",pch=19)
-      text(Position+1,0.6*a,ifelse(ifchinese, dic$zh[5], dic$en[5]),cex=0.6,adj=0)
+    legend("topleft", legend=c(ifelse(ifchinese, dic$zh[4], dic$en[4]),
+                               ifelse(ifchinese, dic$zh[5], dic$en[5]),
+                               ifelse(ifchinese, dic$zh[6], dic$en[6])),bty='n',
+           col=c("black", "grey","red"), pch=c(1,19,19), cex=0.6)
 
 
-      if(an.error.occured == 0 & r.sq>0.90)
-      {
-        with(subset(newdat,Judge=="Obs"),lines(x=Pred,y=ypred,col="red"))
-        with(subset(newdat,Judge=="Pre"),lines(x=Pred,y=ypred,col="red",lty="dotted"))
-        with(subset(newdat,Judge=="Obs"),lines(x=Pred,y=Prednew,col="blue"))
-        with(subset(newdat,Judge=="Pre"),lines(x=Pred,y=Prednew,col="blue",lty="dotted"))
-        with(subset(newdat,Judge=="Tmr"),points(x=Pred,y=ypred,col="red",pch=19))
-        with(subset(newdat,Judge=="Tmr"),points(x=Pred,y=Prednew,col="red",pch=19))
+    if(an.error.occured == 0 & r.sq>0.90)
+    {
+      with(subset(newdat,Judge=="Obs"),lines(x=Pred,y=ypred,col="red"))
+      with(subset(newdat,Judge=="Pre"),lines(x=Pred,y=ypred,col="red",lty="dotted"))
+      with(subset(newdat,Judge=="Obs"),lines(x=Pred,y=Prednew,col="blue"))
+      with(subset(newdat,Judge=="Pre"),lines(x=Pred,y=Prednew,col="blue",lty="dotted"))
+      with(subset(newdat,Judge=="Tmr"),points(x=Pred,y=ypred,col="red",pch=19))
+      with(subset(newdat,Judge=="Tmr"),points(x=Pred,y=Prednew,col="red",pch=19))
 
-        #Modelling legend
-        points(Position,0.5*a,col="red",pch=19)
-        text(Position+1,0.5*a,ifelse(ifchinese, dic$zh[6], dic$en[6]),cex=0.6,adj=0)
-        segments(Position-0.5,0.4*a,Position+0.5,0.4*a,col="black")
-        text(Position+1,0.4*a,ifelse(ifchinese, dic$zh[7], dic$en[7]),cex=0.6,adj=0)
-        segments(Position-0.5,0.3*a,Position+0.5,0.3*a,col="black",lty="dotted")
-        text(Position+1,0.3*a,ifelse(ifchinese, dic$zh[8], dic$en[8]),cex=0.6,adj=0)
-        segments(0,a,xmax,a,lty="dotted")
-      }
+      #Modelling legend
+      legend("top", legend=c(ifelse(ifchinese, dic$zh[7], dic$en[7]),
+                             ifelse(ifchinese, dic$zh[8], dic$en[8])),
+             col=c("black", "black"), lty = 1:2, cex=0.6, bty='n')
+
+      segments(0,a,xmax,a,lty="dotted")
+    }
     # }
   } else {
     list(area = province,
