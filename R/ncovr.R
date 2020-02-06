@@ -365,7 +365,7 @@ plot_map <- function(x,
 #' predict_date(province = "zhongguoinchinese",  ncov = ncovChina,type="confirmed")
 #' predict_date(province = "zhongguoinchinese",  ncov = ncovChina,type="suspected")
 
-predict_date <- function(province, ncov = c(ncov,ncovChina), type="confirmed",ifplot = TRUE, addtitle = NA, ifchinese = FALSE){
+predict_date <- function(province, ncov = c(ncov,ncovChina), type="confirmed",ifplot = TRUE, addtitle = NA, ifchinese = FALSE, fontfamily = NA){
   dic <- readr::read_csv(system.file('dic.csv', package = 'ncovr'))
   #Dataset for a specific area
   types <- c("confirmed","suspected")
@@ -445,7 +445,7 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), type="confirmed",if
     #Plot the results
     # myplot <- function(){
       par(mgp = c(2.5, 1, 0))
-      # if(ifchinese) par(family='STKaiti')
+      if(ifchinese & !is.na(fontfamily)) par(family=fontfamily)
       with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,1.8*xmax),ylim=c(0,1.3*a),ylab=ifelse(ifchinese, dic$zh[9], dic$en[9]),xlab="",bty='n',xaxt = "n"));title(province)
 
       with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
