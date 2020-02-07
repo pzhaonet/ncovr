@@ -424,7 +424,8 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addt
         newdat <- within(newdat, ypred <- predict(md,  list(Day = Pred )))
         newdat$Prednew <- with(newdat,ypred-c(0,ypred[-nrow(newdat)]))
         newdat$Judge <- ifelse(newdat$Date ==Sys.Date(),"Tmr",ifelse(newdat$Date < Sys.Date(),"Obs","Pre"))
-        NewIncrease <- round(subset(newdat,Judge=="Tmr")[,"Prednew"],0)
+        if (Sys.Date()+1>as.Date(END,"%m-%d")){NewIncrease <- 0}else
+            {NewIncrease <- round(subset(newdat,Judge=="Tmr")[,"Prednew"],0)}
         
     }, error = function(e) {an.error.occured <<- 1})
     
