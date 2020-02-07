@@ -14,17 +14,17 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
                      base = 'https://lab.isaaclin.cn/nCoV/api/'){
   method <- match.arg(method)
   if(method == 'tidy'){
-    if(class(try(readRDS(gzcon(url('https://github.com/pzhaonet/travis-ncov/raw/master/data/ncov_tidy.RDS'))))) == 'try-error'){
+    if(class(try(readRDS(gzcon(url('https://github.com/pzhaonet/ncov/raw/master/static/data/ncov_tidy.RDS'))))) == 'try-error'){
       method <- 'api'
     } else{
-      ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/travis-ncov/raw/master/data/ncov_tidy.RDS')))
+      ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/ncov/raw/master/static/data/ncov_tidy.RDS')))
     }
   }
   if(method == 'ncovr'){
-    if(class(try(readRDS(gzcon(url('https://github.com/pzhaonet/travis-ncov/raw/master/data/ncov.RDS'))))) == 'try-error'){
+    if(class(try(readRDS(gzcon(url('https://github.com/pzhaonet/ncov/raw/master/static/data/ncov.RDS'))))) == 'try-error'){
       method <- 'api'
     } else{
-      ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/travis-ncov/raw/master/data/ncov.RDS')))
+      ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/ncov/raw/master/static/data/ncov.RDS')))
     }
   }
   if(method == 'api'){
