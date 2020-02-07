@@ -382,8 +382,7 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addt
     
     if (province==dic$zh[1])
     {
-        DtChina <- ncovChina[-nrow(ncovChina),]
-        RegionDat <- data.frame(confirmedCount=c(58, 136, 198, ncovChina[-nrow(ncovChina),dic$zh[2]]))
+        RegionDat <- data.frame(confirmedCount=c(58, 136, 198, ncovChina[,dic$zh[2]]))
         RegionDat$Date <- seq(as.Date("2020-01-17",format="%Y-%m-%d"),by = "day", length.out = nrow(RegionDat))
     }
     
