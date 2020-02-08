@@ -372,9 +372,10 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addt
         Area <- ncov$area
         Area$updateTime <- ncovr:::conv_time(Area$updateTime)#Correct the time
         Area$Date <- format(Area$updateTime,"%m-%d")
-        Region_all <- unique(Area$provinceShortName)
+        Region_all <- c("湖北以外",unique(Area$provinceShortName))
         Region_name <- Region_all[match(province, Region_all)]#Match regional name
-        Region <- subset(Area,provinceShortName==Region_name)
+        if (Region_name=="湖北以外"){Region <- subset(Area,provinceShortName!="湖北")}else
+        {Region <- subset(Area,provinceShortName==Region_name)}
         RegionDat <- aggregate(confirmedCount~Date,data=Region,max)
         RegionDat$Date <- as.Date(RegionDat$Date,"%m-%d")
         RegionDat <- RegionDat[RegionDat$Date<Sys.Date(),]
@@ -384,6 +385,7 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addt
     {
         RegionDat <- data.frame(confirmedCount=c(58, 136, 198, ncovChina[,dic$zh[2]]))
         RegionDat$Date <- seq(as.Date("2020-01-17",format="%Y-%m-%d"),by = "day", length.out = nrow(RegionDat))
+        
     }
     
     #No data availalbe for specific date
@@ -395,6 +397,7 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addt
     END <- NA
     Predict <- NA
     NewIncrease <- NA
+    NewIncrease2 <- NA
     a <- NA
     xmax <- NA
     r.sq <- NA
@@ -417,51 +420,66 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addt
         X1 <- RegionDat[complete.cases(RegionDat$confirmedCount),"confirmedCount"]
         Y1 <- predict(md,X1)
         r.sq <- max(cor(X1,Y1),0)^2
-        
+
         #The daily increase case
         Lth <- as.numeric(as.Date(END,"%m-%d")-as.Date(Dseq[1],"%m-%d"))
         newdat <-  data.frame(Date=as.Date(Dseq[1:Lth],"%m-%d"),Pred=1:Lth)
         newdat <- within(newdat, ypred <- predict(md,  list(Day = Pred )))
         newdat$Prednew <- with(newdat,ypred-c(0,ypred[-nrow(newdat)]))
         newdat$Judge <- ifelse(newdat$Date ==Sys.Date(),"Tmr",ifelse(newdat$Date < Sys.Date(),"Obs","Pre"))
-        if (Sys.Date()+1>as.Date(END,"%m-%d")){NewIncrease <- 0}else
-            {NewIncrease <- round(subset(newdat,Judge=="Tmr")[,"Prednew"],0)}
+    if (Sys.Date()+1>as.Date(END,"%m-%d")){NewIncrease <- 0}else
+    {NewIncrease <- round( newdat[which(newdat$Judge=="Tmr"),"Prednew"],0)}
+        if (Sys.Date()+2>as.Date(END,"%m-%d")){NewIncrease2 <- 0}else
+        {NewIncrease2 <- round( newdat[which(newdat$Judge=="Tmr")+1,"Prednew"],0)}
         
     }, error = function(e) {an.error.occured <<- 1})
     
     if(ifplot){
-        #Plot the results
-        par(mgp = c(2.5, 1, 0))
-        if(ifchinese & !is.na(fontfamily)) par(family=fontfamily)
-        with(RegionDat,plot(y=confirmedCount,x=Day,xlim=c(0,Length),ylim=c(0,2*max(confirmedCount)),ylab=ifelse(ifchinese, dic$zh[9], dic$en[9]),xlab="",bty='n',xaxt = "n"))
-        title(province)
-        with(RegionDat,points(y=New,x=Day,col="grey",pch=19))
-        Dseq <- format(seq(RegionDat$Date[1],by = "day", length.out = Length ),"%m-%d")
-        axis(1, at=1:Length, labels=Dseq,cex.axis = 0.6,las=2)
-        
-        legend("topleft", legend=c(ifelse(ifchinese, dic$zh[4], dic$en[4]),ifelse(ifchinese, dic$zh[5], dic$en[5]),ifelse(ifchinese, dic$zh[6], dic$en[6])),bty='n',col=c("black", "grey","red"), pch=c(1,19,19), cex=0.6)
-        
+      p <-  ggplot(RegionDat,aes(y=confirmedCount,x=Date))+
+          annotate(geom="text", x=median(as.Date(Dseq,"%m-%d")), y=max(RegionDat$confirmedCount,na.rm=T),  label='laiyindata', color='grey90', angle=45, fontface='bold', size=15,alpha=0.4)+
+          geom_point(col="red")+
+          ylim(0,2*max(RegionDat$confirmedCount,na.rm=T))+
+          xlab("")+
+          ylab("Confirmed Cases")+
+          ggtitle(province)+ #Title of the plot, in Chinese
+          geom_point(aes(y=New,x=Date),col="blue")+
+          scale_colour_manual(name = '', values =c('blue','red'))
+
         if(an.error.occured == 0 & r.sq>0.90)
         {
-            with(subset(newdat,Judge=="Obs"),lines(x=Pred,y=ypred,col="red"))
-            with(subset(newdat,Judge=="Pre"),lines(x=Pred,y=ypred,col="red",lty="dotted"))
-            with(subset(newdat,Judge=="Obs"),lines(x=Pred,y=Prednew,col="blue"))
-            with(subset(newdat,Judge=="Pre"),lines(x=Pred,y=Prednew,col="blue",lty="dotted"))
-            with(subset(newdat,Judge=="Tmr"),points(x=Pred,y=ypred,col="red",pch=19))
-            with(subset(newdat,Judge=="Tmr"),points(x=Pred,y=Prednew,col="red",pch=19))
-            
-            #Modelling legend
-            legend("top", legend=c(ifelse(ifchinese, dic$zh[7], dic$en[7]),ifelse(ifchinese, dic$zh[8], dic$en[8])), col=c("black", "black"), lty = 1:2, cex=0.6, bty='n')
+            newdatmg <- merge(newdat,RegionDat,by="Date",all=T)
+            Ldft <- which(newdatmg$Judge=="Tmr")+1
+            p <- ggplot(subset(newdatmg,Judge!="Tmr"),aes(y=confirmedCount,x=Date))+
+                annotate(geom="text", x=median(as.Date(Dseq,"%m-%d")), y=max(RegionDat$confirmedCount,na.rm=T),  label='laiyindata', color='grey90', angle=45, fontface='bold', size=15,alpha=0.4)+
+                ylim(0,max(1.1*a,2*max(RegionDat$confirmedCount,na.rm=T)))+
+                xlab("")+
+                ylab("Confirmed Cases")+
+                ggtitle(province)+ #Title of the plot, in Chinese
+                geom_point(aes(col="Predict"),shape=1,size=2.5)+
+                geom_point(aes(y=New,x=Date,col="Confirmed"),shape=1,size=2.5)+
+                scale_colour_manual(name = '', values =c('blue','red'))+
+                geom_line(aes(y=ypred,x=Date,linetype=Judge),col="red")+
+                geom_line(aes(y=Prednew,x=Date,linetype=Judge),col="blue")+
+                scale_linetype_manual(name = '',values=c(1,2),labels=c("Model fit","Prediction"))
+                if(NewIncrease>0)
+                {p <- p+with(subset(newdatmg,Judge=="Tmr"),geom_point(aes(shape="Tomorrow"),y=ypred,x=Date,col="red",size=2))+
+                with(subset(newdatmg,Judge=="Tmr"),geom_point(y=Prednew,x=Date,col="red",size=2))+labs(shape="")
+                }
         }
-    } else {
+      p <- p+theme_bw(base_family = "STXihei")+
+          theme(axis.text.x = element_text(angle = 90, hjust = 1),legend.position="bottom")+
+          scale_x_date(date_breaks = "1 day", date_labels = "%m-%d",limits=c(as.Date("1-17","%m-%d"),Sys.Date()+20),expand=c(0,0))
+      print(p)
+      return(p)
+      } else {
         list(area = province,
              enddate = END,
-             tomorrow = Dseq[nrow(RegionDat)+1],
+             tomorrow = Sys.Date(),
              tomorrowcount = Predict,
-             tomorrowNew=NewIncrease)
+             tomorrowNew=NewIncrease,
+             dayafterNew=NewIncrease2)
     }
 }
-
 
 conv_time <- function(x){
   as.POSIXct('1970-01-01', tz = 'GMT') + x / 1000
