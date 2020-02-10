@@ -37,7 +37,7 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
                      get_raw <- httr::GET(paste0(base, x))
                      get_text <- httr::content(get_raw, "text")
                      y <- jsonlite::fromJSON(get_text)$results
-                     if(grepl('area', port)) {
+                     if(grepl('area', x)) {
                        dic_city <-  readr::read_csv(system.file('china_city_list.csv', package = 'ncovr'))
                        y$province_en <- dic_city[match(y$provinceShortName, dic_city$Province), 'Province_EN']
                        y
