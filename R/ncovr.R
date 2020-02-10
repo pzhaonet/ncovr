@@ -84,11 +84,11 @@ conv_ncov <- function(ncov){
       ncov_area$cities[i][[1]]$updateTime <- ncov_area$updateTime[i]
       ncov_area$cities[i][[1]]$createTime <- ncov_area$createTime[i]
       ncov_area$cities[i][[1]]$modifyTime <- ncov_area$modifyTime[i]
-      ncov_area$cities[i][[1]]$province_en <- dic_city[match(ncov_area$provinceShortName[i], dic_city$Province), 'Province_EN']
-      ncov_area$cities[i][[1]]$city_en <- dic_city[match(ncov_area$cities[i][[1]]$cityName, dic_city$City), 'City_EN']
+      ncov_area$cities[i][[1]]$province_en <- unlist(dic_city[match(ncov_area$provinceShortName[i], dic_city$Province), 'Province_EN'])
     }
   }
   ncov$area <- dplyr::bind_rows(ncov_area$cities)
+  ncov$area$city_en <- unlist(dic_city[match(ncov$area$cityName, dic_city$City), 'City_EN'])
   ncov
 }
 
