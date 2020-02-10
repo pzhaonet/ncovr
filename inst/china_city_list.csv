@@ -344,3 +344,7 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 黔西南,黔西南布依族苗族自治州,Qianxinan,贵州,Guizhou,West,Tier 5
 齐齐哈尔,齐齐哈尔市,Qiqihar,黑龙江,Heilongjiang,North,Tier 3
 龙岩,龙岩市,Longyan,福建,Fujian,East,Tier 3
+香港,香港特别行政区,Hong Kong,香港,Hong Kong,South,Unknown
+澳门,澳门特别行政区,Macau,澳门,Macau,South,Unknown
+台湾,台湾省,Taiwan,台湾,Taiwan,East,Unknown
+

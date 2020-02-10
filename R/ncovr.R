@@ -40,8 +40,8 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
                      if(grepl('area', x)) {
                        dic_city <-  readr::read_csv(system.file('china_city_list.csv', package = 'ncovr'))
                        y$province_en <- dic_city[match(y$provinceShortName, dic_city$Province), 'Province_EN']
-                       y
                      }
+                     y
                    })
     names(ncov) <- port
 
