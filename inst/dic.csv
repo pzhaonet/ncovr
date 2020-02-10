@@ -8,3 +8,18 @@ no, en, zh
 7, Model fit, 模型
 8, Prediction, 预测
 9, Number of cases, 病例数
+10, Date, 日期
+11, Total Conf., 累计确诊
+12, Crnt Conf., 现有确诊（含重症）
+13, Crnt Susp., 现有疑似
+14, Crnt Sevr., 现有重症
+15, Total Death., 累计死亡
+16, Total Cured, 累计治愈
+17, Total Conf.+Susp., 累计确诊+现有疑似
+18, Incrs Conf., 新增确诊
+19, Incrs Susp., 新增疑似
+20, Incrs Susp.+Conf., 新增(疑似+确诊)
+21, Ratio D/C, 死亡/确诊
+22, Obs., 观察中
+23, Updated, 更新时间
+24, Remarks, 备注

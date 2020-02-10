@@ -11,20 +11,24 @@
 #' get_ncov('overall')
 get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
                      port = c('area', 'overall', 'news', 'rumors'),
-                     base = 'https://lab.isaaclin.cn/nCoV/api/'){
+                     base = 'https://lab.isaaclin.cn/nCoV/api/',
+                     if_en = FALSE){
   method <- match.arg(method)
-  if(method == 'tidy'){
-    if(class(try(readRDS(gzcon(url('https://github.com/pzhaonet/ncov/raw/master/static/data-download/ncov_tidy.RDS'))))) == 'try-error'){
-      method <- 'api'
-    } else{
-      ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/ncov/raw/master/static/data-download/ncov_tidy.RDS')))
-    }
-  }
+
+  if(if_en) dic <- readr::read_csv(system.file('dic.csv', package = 'ncovr'))
+
   if(method == 'ncovr'){
     if(class(try(readRDS(gzcon(url('https://github.com/pzhaonet/ncov/raw/master/static/data-download/ncov.RDS'))))) == 'try-error'){
       method <- 'api'
     } else{
       ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/ncov/raw/master/static/data-download/ncov.RDS')))
+    }
+  }
+  if(method == 'tidy'){
+    if(class(try(readRDS(gzcon(url('https://github.com/pzhaonet/ncov/raw/master/static/data-download/ncov_tidy.RDS'))))) == 'try-error'){
+      method <- 'api'
+    } else{
+      ncov <- readRDS(gzcon(url('https://github.com/pzhaonet/ncov/raw/master/static/data-download/ncov_tidy.RDS')))
     }
   }
   if(method == 'api'){
@@ -40,6 +44,7 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
     ncov <- jsonlite::fromJSON('https://raw.githubusercontent.com/JackieZheng/2019-nCoV/master/Json/data.json')
     ncov[, 2:9] <- apply(ncov[,2:9], c(1,2), as.numeric)
     ncov[, 1] <- as.Date(ncov[, 1])
+    if(if_en) names(ncov) <- dic$en[match(names(ncov), dic$zh)]
   }
   if(method == 'csv') {
     port_upper <- conv_firstletter(port)
@@ -389,7 +394,8 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addt
 
   if (province==dic$zh[1])
   {
-    RegionDat <- data.frame(confirmedCount=c(58, 136, 198, ncovChina[,dic$zh[2]]))
+    col_confirmed <- dic$zh[c(2, 11)][dic$zh[c(2, 11)] %in% names(ncovChina)]
+    RegionDat <- data.frame(confirmedCount=c(58, 136, 198, ncovChina[,col_confirmed]))
     RegionDat$Date <- seq(as.Date("2020-01-17",format="%Y-%m-%d"),by = "day", length.out = nrow(RegionDat))
 
   }
