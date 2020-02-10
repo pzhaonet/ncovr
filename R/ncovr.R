@@ -36,9 +36,15 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
                    function(x) {
                      get_raw <- httr::GET(paste0(base, x))
                      get_text <- httr::content(get_raw, "text")
-                     jsonlite::fromJSON(get_text)$results
+                     y <- jsonlite::fromJSON(get_text)$results
+                     if(grepl('area', port)) {
+                       dic_city <-  readr::read_csv(system.file('china_city_list.csv', package = 'ncovr'))
+                       y$province_en <- dic_city[match(y$provinceShortName, dic_city$Province), 'Province_EN']
+                       y
+                     }
                    })
     names(ncov) <- port
+
   }
   if(method == 'china'){
     ncov <- jsonlite::fromJSON('https://raw.githubusercontent.com/JackieZheng/2019-nCoV/master/Json/data.json')
@@ -60,6 +66,8 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
 
 
 conv_ncov <- function(ncov){
+  dic_city <-  readr::read_csv(system.file('china_city_list.csv', package = 'ncovr'))
+
   # convert time stamps
   ncov$area$updateTime <- conv_time(ncov$area$updateTime)
   ncov$area$createTime <- conv_time(ncov$area$createTime)
@@ -76,6 +84,8 @@ conv_ncov <- function(ncov){
       ncov_area$cities[i][[1]]$updateTime <- ncov_area$updateTime[i]
       ncov_area$cities[i][[1]]$createTime <- ncov_area$createTime[i]
       ncov_area$cities[i][[1]]$modifyTime <- ncov_area$modifyTime[i]
+      ncov_area$cities[i][[1]]$province_en <- dic_city[match(ncov_area$provinceShortName[i], dic_city$Province), 'Province_EN']
+      ncov_area$cities[i][[1]]$city_en <- dic_city[match(ncov_area$cities[i][[1]]$cityName, dic_city$City), 'City_EN']
     }
   }
   ncov$area <- dplyr::bind_rows(ncov_area$cities)
