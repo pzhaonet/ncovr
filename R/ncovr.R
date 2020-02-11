@@ -493,3 +493,5 @@ conv_time <- function(x){
 conv_firstletter <- function(x){
   paste(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)), sep="")
 }
+
+

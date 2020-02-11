@@ -65,12 +65,12 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 呼和浩特,呼和浩特市,Hohhot,内蒙古,Neimenggu,North,Tier 3
 和田,和田地区,Hetian,新疆,Xinjiang,West,Tier 5
 咸宁,咸宁市,Xianning,湖北,Hubei,West,Tier 5
-咸阳,咸阳市,Xianyang,陕西,Shanxi,West,Tier 3
+咸阳,咸阳市,Xianyang,陕西,Shaanxi,West,Tier 3
 哈密,哈密地区,Hami,新疆,Xinjiang,West,Tier 5
 哈尔滨,哈尔滨市,Harbin,黑龙江,Heilongjiang,North,Tier 2
 唐山,唐山市,Tangshan,河北,Hebei,North,Tier 3
 商丘,商丘市,Shangqiu,河南,Henan,North,Tier 5
-商洛,商洛市,Shangluo,陕西,Shanxi,West,Tier 5
+商洛,商洛市,Shangluo,陕西,Shaanxi,West,Tier 5
 喀什,喀什地区,Kashen,新疆,Xinjiang,West,Tier 5
 嘉兴,嘉兴市,Jiaxing,浙江,Zhejiang,East,Tier 2
 嘉峪关,嘉峪关市,Jiayuguan,甘肃,Gansu,West,Tier 5
@@ -91,14 +91,14 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 宁德,宁德市,Ningde,福建,Fujian,East,Tier 3
 宁波,宁波市,Ningbo,浙江,Zhejiang,East,new Tier 1
 安庆,安庆市,Anqing,安徽,Anhui,East,Tier 5
-安康,安康市,Ankang,陕西,Shanxi,West,Tier 5
+安康,安康市,Ankang,陕西,Shaanxi,West,Tier 5
 安阳,安阳市,Anyang,河南,Henan,North,Tier 5
 安顺,安顺市,Anshun,贵州,Guizhou,West,Tier 5
 定西,定西市,Dingxi,甘肃,Gansu,West,Tier 5
 宜宾,宜宾市,Yibin,四川,Sichuan,West,Tier 5
 宜昌,宜昌市,Yichang,湖北,Hubei,West,Tier 3
 宜春,宜春市,Yichun,江西,Jiangxi,South,Tier 5
-宝鸡,宝鸡市,Baoji,陕西,Shanxi,West,Tier 5
+宝鸡,宝鸡市,Baoji,陕西,Shaanxi,West,Tier 5
 宣城,宣城市,Xuancheng,安徽,Anhui,East,Tier 5
 宿州,宿州市,Suzhou,安徽,Anhui,East,Tier 5
 宿迁,宿迁市,Suqian,江苏,Jiangsu,East,Tier 5
@@ -119,7 +119,7 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 广州,广州市,Guangzhou,广东,Guangdong,South,Tier 1
 庆阳,庆阳市,Qingyang,甘肃,Gansu,West,Tier 5
 廊坊,廊坊市,Langfang,河北,Hebei,North,Tier 3
-延安,延安市,Yan'an,陕西,Shanxi,West,Tier 5
+延安,延安市,Yan'an,陕西,Shaanxi,West,Tier 5
 延边,延边朝鲜族自治州,Yanbian,吉林,Jilin,North,Tier 3
 开封,开封市,Kaifeng,河南,Henan,North,Tier 5
 张家口,张家口市,Zhangjiakou,河北,Hebei,North,Tier 5
@@ -175,13 +175,13 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 梅州,梅州市,Meizhou,广东,Guangdong,South,Tier 5
 梧州,梧州市,Wuzhou,广西,Guangxi,South,Tier 5
 楚雄,楚雄彝族自治州,Chuxiong,云南,Yunnan,West,Tier 5
-榆林,榆林市,Yulin,陕西,Shanxi,West,Tier 5
+榆林,榆林市,Yulin,陕西,Shaanxi,West,Tier 5
 武威,武威市,Wuwei,甘肃,Gansu,West,Tier 5
 武汉,武汉市,Wuhan,湖北,Hubei,West,new Tier 1
 毕节,毕节地区,Bijie,贵州,Guizhou,West,Tier 5
 毕节,毕节市,Bijie,贵州,Guizhou,West,Tier 5
 永州,永州市,Yongzhou,湖南,Hunan,South,Tier 5
-汉中,汉中市,Hanzhong,陕西,Shanxi,West,Tier 5
+汉中,汉中市,Hanzhong,陕西,Shaanxi,West,Tier 5
 汕头,汕头市,Shantou,广东,Guangdong,South,Tier 3
 汕尾,汕尾市,Shanwei,广东,Guangdong,South,Tier 5
 江门,江门市,Jiangmen,广东,Guangdong,South,Tier 3
@@ -210,7 +210,7 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 深圳,深圳市,Shenzhen,广东,Guangdong,South,Tier 1
 清远,清远市,Qingyuan,广东,Guangdong,South,Tier 3
 温州,温州市,Wenzhou,浙江,Zhejiang,East,Tier 2
-渭南,渭南市,Weinan,陕西,Shanxi,West,Tier 5
+渭南,渭南市,Weinan,陕西,Shaanxi,West,Tier 5
 湖州,湖州市,Huzhou,浙江,Zhejiang,East,Tier 3
 湘潭,湘潭市,Xiangtan,湖南,Hunan,South,Tier 5
 湘西,湘西土家族苗族自治州,Xiangxi,湖南,Hunan,South,Tier 5
@@ -269,7 +269,7 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 襄樊,襄樊市,Xiangfan,湖北,hubei,West,Tier 5
 西双版纳,西双版纳傣族自治州,Xishuangbanna,云南,Yunnan,West,Tier 5
 西宁,西宁市,Xining,青海,Qinghai,West,Tier 3
-西安,西安市,Xi'an,陕西,Shanxi,West,new Tier 1
+西安,西安市,Xi'an,陕西,Shaanxi,West,new Tier 1
 许昌,许昌市,Xuchang,河南,Henan,North,Tier 5
 贵港,贵港市,Guigang,广西,Guangxi,South,Tier 5
 贵阳,贵阳市,Guiyang,贵州,Guizhou,West,Tier 2
@@ -303,7 +303,7 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 铁岭,铁岭市,Tieling,辽宁,Liaoning,North,Tier 5
 铜仁,铜仁地区,Tongren,贵州,Guizhou,West,Tier 5
 铜仁,铜仁市,Tongren,贵州,Guizhou,West,Tier 5
-铜川,铜川市,Tongchuan,陕西,Shanxi,West,Tier 5
+铜川,铜川市,Tongchuan,陕西,Shaanxi,West,Tier 5
 铜陵,铜陵市,Tongling,安徽,Anhui,East,Tier 5
 银川,银川市,Yinchuan,宁夏,Ningxia,West,Tier 3
 锡林郭勒,锡林郭勒盟,Linguolexi,内蒙古,Neimenggu,North,Tier 5
