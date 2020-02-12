@@ -378,7 +378,7 @@ plot_map <- function(x,
   mymap
 }
 
-#' Predict
+#' Previous version of predict_date()
 #'
 #' @param province province short name
 #' @param ncov ncov data
@@ -609,4 +609,97 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addt
          tomorrowcount = Predict,
          tomorrowNew=NewIncrease)
   }
+}
+
+
+#' Plot map with ggplot
+#'
+#' @param x data frame with province name and value
+#' @param col_name column whose value is to display
+#' @param province_language chinese, english or NA (not shown)
+#' @param show_capitials logical.
+#' @param add_title title
+#'
+#' @return a ggplot map
+#' @export
+#'
+#' @examples
+#' require(ncovr)
+#' library(ggplot2)
+#' library(dplyr)
+#' library(scales)
+#' Sys.setlocale("LC_CTYPE", "Chinese")
+#' ncov <- get_ncov()
+#' ncov$area$date <- as.Date(ncovr:::conv_time(ncov$area$updateTime))
+#'
+#' choose_date <- "2020-02-10"
+#' x <- ncov$area[ncov$area$date <= as.Date(choose_date), ]
+#' x <- x[!duplicated(x$provinceName), ]
+#' plot_ggmap(x)
+#' plot_ggmap(x, province_language = "english", show_capitials = TRUE) +
+#'   annotate(geom = "text", 105, y = 35, label = "ncov2020.org", color = "white",
+#'            fontface = "bold", size = 10, alpha = 0.5)
+#'
+#' library(animation)
+#' ncov_dates <- as.character(rev(unique(ncov$area$date)))
+#' ani.options(interval = 0.5, ani.width = 1000, ani.height = 600)
+#' saveGIF({
+#'   for (i in rev(ncov_dates)) {
+#'     x <- ncov$area[ncov$area$date <= as.Date(i), ]
+#'     x <- x[!duplicated(x$provinceName), ]
+#'     print(plot_ggmap(x,))
+#'   }
+#' }, movie.name = "map_animation.gif")
+
+plot_ggmap <- function(x, col_name = 'confirmedCount', province_language = 'chinese', show_capitials = TRUE, add_title = NA){
+  load(system.file('ProvinceMapDatas.Rda', package = 'ncovr'))
+  city_position = read.csv(system.file("city_position.csv", package = 'ncovr'))
+  x$value <- x[, col_name]
+
+  china_map_virus = left_join(df_China, x[, c('provinceShortName', 'value')], by = c("NAME" = "provinceShortName"))
+
+  p <-
+    ggplot() +
+    geom_polygon(data = china_map_virus,
+                 aes(x = long, y = lat, group = interaction(class, group), fill = value),
+                 colour = "black", size = 0.25) +
+    geom_rect(aes(xmin = 124, xmax = 124 + 9.3, ymin = 16 - 0.3, ymax = 16 + 9),
+              fill = NA, colour = "black", size = 0.25) +
+    geom_line(data = df_NanHaiLine, aes(x = long, y = lat, group = ID),
+              colour = "grey40", size = 1) +
+    scale_fill_gradient(low = "white", high = "darkred", na.value = "white", trans = "log", limits = c(1, 10^5), breaks = 10 ^(0:5), labels = c('1', '10', '100', '1,000', '10,000', '100,000'))  +
+    coord_map() +
+    ylim(14, 54) +
+    theme(axis.title = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          panel.background = element_blank(),
+          legend.position = c(0.85, 0.4),
+          legend.title = element_blank(),
+          legend.background = element_blank(),
+          plot.title = element_text(hjust = 0.5,
+                                    size = 16,
+                                    face = "bold",
+                                    color = "black"))
+  if(!is.na(add_title)){
+    p <- p +
+      geom_text(data = data.frame(long = 105, lat = 50), aes(x = long, y = lat, label = add_title),
+                colour = "black", size = 5)
+  }
+
+  if(show_capitials){
+    p <- p +  geom_point(data = city_position, aes(x = long, y = lat),
+                         colour = "black", size = 1)
+  }
+
+  if(!is.na(province_language)){
+    if(province_language == 'english') {
+      dic_city <-  readr::read_csv(system.file('china_city_list.csv', package = 'ncovr'))
+      city_position$province <- dic_city$Province_EN[match(city_position$province, dic_city$Province)]
+    }
+    p <- p +
+      geom_text(data = city_position, aes(x = long, y = lat, label = province),
+                colour = "black", size = 3, vjust = 0, nudge_y = 0.5)
+  }
+  p
 }
