@@ -1,11 +1,12 @@
 Package: ncovr
-Version: 0.0.7
-Date: 2020-02-06
+Version: 0.0.8
+Date: 2020-02-12
 Title: Read and process nCoV data
 Authors@R: c(
     person("Peng", "Zhao", role = c("aut", "cre"), email = "pzhao@pzhao.net"),
     person("Yi", "Zou", role = "aut"),
-    person("Lei", "Han", role = "aut")
+    person("Lei", "Han", role = "aut"),
+    person("Xinyuan", "Chu", role = "ctb")
   )
 Maintainer: Peng Zhao <pzhao@pzhao.net>
 Depends: R (>= 3.2)
