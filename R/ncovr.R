@@ -157,15 +157,15 @@ geojsonMap_legendless = function(dat,
                                  weight = 1,
                                  fillOpacity = 0.7,
                                  legendTitle = "Legend",
-                                 tileType = amap,
+                                 tileType = NULL,
                                  ...){
   if(class(dat) != 'data.frame'){
     stop("dat should be a data.frame")
   }
   if(is.null(namevar)){
-    name = dat[, 1] %>% leafletCN:::toLabel()
+    name = dat[, 1]
   }else{
-    name = leaflet::evalFormula(namevar,dat) %>% leafletCN:::toLabel()
+    name = leaflet::evalFormula(namevar,dat)
   }
   name = as.character(name)
 
@@ -177,7 +177,7 @@ geojsonMap_legendless = function(dat,
 
 
   countries <- leafletCN:::readGeoLocal(mapName)
-  countries$label = leafletCN:::toLabel(countries$name)
+  countries$label = countries$name
   index = sapply(countries$label,function(x) which(name==x)[1])
 
   if(is.null(popup)){
@@ -231,14 +231,30 @@ geojsonMap_legendless = function(dat,
 
 
   map <- leaflet::leaflet(countries)
-  map %>% tileType %>%
-    leaflet::addPolygons(stroke = stroke,
-                         smoothFactor = smoothFactor,
-                         fillOpacity = fillOpacity,
-                         weight = weight,
-                         color = ~pal(value),
-                         popup = ~htmltools::htmlEscape(popup)
+
+  if (is.null(tileType)) {
+    if (is.null(tileType)) {
+      map %>%
+        leaflet::addPolygons(
+          stroke = stroke,
+          smoothFactor = smoothFactor,
+          fillOpacity = fillOpacity,
+          weight = weight,
+          color = ~pal(value),
+          popup = ~htmltools::htmlEscape(popup)
+        )
+    }
+  } else {
+    map %>% tileType %>%
+      leaflet::addPolygons(
+        stroke = stroke,
+        smoothFactor = smoothFactor,
+        fillOpacity = fillOpacity,
+        weight = weight,
+        color = ~pal(value),
+        popup = ~htmltools::htmlEscape(popup)
     )
+  }
 }
 
 #' Plot maps for nCoV in China
@@ -269,6 +285,18 @@ plot_map <- function(x,
   scale <- match.arg(scale)
   method <- match.arg(method)
 
+  ## add nanhai
+  nanhai_label <- dplyr::filter(leafletCN::mapNames, name_en == "Nanhai")
+  nanhai <- data.frame(
+    provinceName = nanhai_label$name,
+    provinceShortName = nanhai_label$name,
+    provinceEnglishName = "Nanhai",
+    stringsAsFactors = FALSE
+  )
+  x$province_en <- unlist(x$province_en)
+  x <- dplyr::bind_rows(x, nanhai) %>%
+    dplyr::mutate_if(is.numeric, ~ ifelse(is.na(.x), 0, .x))
+
   count_cut <- c(0, 9, 99, 999, Inf)
 
   if("provinceName" %in% names(x)) x <- x[x$provinceName != filter,]
@@ -279,6 +307,7 @@ plot_map <- function(x,
       x$key_level <- cut(
         x$key,
         count_cut,
+        include.lowest = TRUE,
         labels = c('< 10', '10-99', '100-999', '>999'))
       mymap <-
         leafletCN::geojsonMap(
@@ -286,7 +315,7 @@ plot_map <- function(x,
           mapName = "china",
           colorMethod = "factor",
           palette=color,
-          namevar = ~provinceName,
+          namevar = ~provinceShortName,
           valuevar = ~key_level,
           popup =  paste(
             x$provinceName,
@@ -296,16 +325,17 @@ plot_map <- function(x,
     if(scale == 'log'){
       x$key_log <- log10(x$key)
       x$key_log[x$key == 0] <- NA
+
       mymap <-
         geojsonMap_legendless(
-        dat = x,
-        mapName = "china",
-        palette = color,
-        namevar = ~provinceName,
-        valuevar = ~key_log,
-        popup =  paste(
-          x$provinceName,
-          x$key)) %>%
+          dat = x,
+          mapName = "china",
+          palette=color,
+          namevar = ~provinceShortName,
+          valuevar = ~key_log,
+          popup =  paste(
+            x$provinceName,
+            x$key)) %>%
         leaflet::addLegend(
           "bottomright",
           bins = 4,
