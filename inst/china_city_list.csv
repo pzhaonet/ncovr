@@ -30,7 +30,7 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 保山,保山市,Baoshan,云南,Yunnan,West,Tier 5
 信阳,信阳市,Xinyang,河南,Henan,North,Tier 5
 儋州,儋州市,Danzhou,海南,Hainan,South,Tier 5
-克孜勒苏柯尔克孜,克孜勒苏柯尔克孜自治州,Kezilesukeerkezi,新疆,xinjiang,West,Tier 5
+克孜勒苏柯尔克孜,克孜勒苏柯尔克孜自治州,Kezilesukeerkezi,新疆,Xinjiang,West,Tier 5
 克拉玛依,克拉玛依市,Karamay,新疆,Xinjiang,West,Tier 5
 六安,六安市,Lu'an,安徽,Anhui,East,Tier 5
 六盘水,六盘水市,Liupanshui,贵州,Guizhou,West,Tier 5
@@ -106,7 +106,7 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 山南,山南市,Shannan,西藏,Xizang,West,Tier 5
 岳阳,岳阳市,Yueyang,湖南,Hunan,South,Tier 3
 崇左,崇左市,Chongzuo,广西,Guangxi,South,Tier 5
-巢湖,巢湖市,Chaohu,安徽,anhui,East,Tier 5
+巢湖,巢湖市,Chaohu,安徽,Anhui,East,Tier 5
 巴中,巴中市,Bazhong,四川,Sichuan,West,Tier 5
 巴彦淖尔,巴彦淖尔市,Bayannur,内蒙古,Neimenggu,North,Tier 5
 巴音郭楞,巴音郭楞蒙古自治州,Bayinguoleng,新疆,Xinjiang,West,Tier 5
@@ -266,7 +266,7 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 衡水,衡水市,Hengshui,河北,Hebei,North,Tier 5
 衡阳,衡阳市,Hengyang,湖南,Hunan,South,Tier 3
 衢州,衢州市,Quzhou,浙江,Zhejiang,East,Tier 3
-襄樊,襄樊市,Xiangfan,湖北,hubei,West,Tier 5
+襄樊,襄樊市,Xiangfan,湖北,Hubei,West,Tier 5
 西双版纳,西双版纳傣族自治州,Xishuangbanna,云南,Yunnan,West,Tier 5
 西宁,西宁市,Xining,青海,Qinghai,West,Tier 3
 西安,西安市,Xi'an,陕西,Shaanxi,West,new Tier 1
@@ -340,11 +340,10 @@ City,City_Admaster,City_EN,Province,Province_EN,Region,Tier
 黄石,黄石市,Huangshi,湖北,Hubei,West,Tier 5
 黑河,黑河市,Heihe,黑龙江,Heilongjiang,North,Tier 5
 黔东南,黔东南苗族侗族自治州,Qiandongnan,贵州,Guizhou,West,Tier 5
-黔南,黔南布依族苗族自治州,Qiannan,贵州,guizhou,West,Tier 5
+黔南,黔南布依族苗族自治州,Qiannan,贵州,Guizhou,West,Tier 5
 黔西南,黔西南布依族苗族自治州,Qianxinan,贵州,Guizhou,West,Tier 5
 齐齐哈尔,齐齐哈尔市,Qiqihar,黑龙江,Heilongjiang,North,Tier 3
 龙岩,龙岩市,Longyan,福建,Fujian,East,Tier 3
 香港,香港特别行政区,Hong Kong,香港,Hong Kong,South,Unknown
 澳门,澳门特别行政区,Macau,澳门,Macau,South,Unknown
 台湾,台湾省,Taiwan,台湾,Taiwan,East,Unknown
-
