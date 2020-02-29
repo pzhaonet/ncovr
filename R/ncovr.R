@@ -264,7 +264,7 @@ plot_map <- function(x,
                      legend_title ='Confirmed',
                      color = "Reds",
                      scale = c("cat", "log"),
-                     method = c('province', 'city')){
+                     method = c('province', 'city', 'country')){
   key <- match.arg(key)
   scale <- match.arg(scale)
   method <- match.arg(method)
@@ -375,6 +375,57 @@ plot_map <- function(x,
           opacity = 1)
     }
   }
+
+  if(method == "country"){
+    if(scale == "cat") {
+      x$key_level <- cut(
+        x$key,
+        count_cut,
+        labels = c('< 10', '10-99', '100-999', '>999'))
+      mymap <-
+        leafletCN::geojsonMap(
+          dat = x,
+          mapName = "world",
+          colorMethod = "factor",
+          palette=color,
+          namevar = ~countryEnglishName2,
+          valuevar = ~key_level,
+          popup =  paste(
+            x$countryEnglishName,
+            x$key,
+            x$countryName),
+          legendTitle = legend_title)
+    }
+    if(scale == 'log'){
+      x$key_log <- log10(x$key)
+      x$key_log[x$key == 0] <- NA
+      mymap <-
+        geojsonMap_legendless(
+          dat = x,
+          mapName = "world",
+          palette = color,
+          namevar = ~countryEnglishName2,
+          valuevar = ~key_log,
+          popup =  paste(
+            x$countryEnglishName,
+            x$key,
+            x$countryName)) %>%
+        leaflet::addLegend(
+          "bottomright",
+          bins = 4,
+          pal = leaflet::colorNumeric(
+            palette = color,
+            domain = x$key_log
+          ),
+          values = x$key_log,
+          title = legend_title,
+          labFormat = leaflet::labelFormat(
+            digits = 0,
+            transform = function(x) 10 ^ x),
+          opacity = 1)
+    }
+  }
+
   mymap
 }
 
