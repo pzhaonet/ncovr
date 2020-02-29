@@ -271,7 +271,7 @@ plot_map <- function(x,
 
   count_cut <- c(0, 9, 99, 999, Inf)
 
-  x <- x[x$provinceName != filter,]
+  if("provinceName" %in% names(x)) x <- x[x$provinceName != filter,]
   x$key <- x[, key]
 
   if(method == "province"){
