@@ -786,7 +786,7 @@ plot_ts <- function(x, area, area_col = "countryEnglishName", date_col = "date",
   x_ts <- tidyr::fill(x_ts, -1, .direction = "down")
   x_ts[is.na(x_ts)] <- 0
   x_ts <- xts::xts(x_ts[, 2:4], x_ts$Date)
-  dygraphs::dygraph(x_ts, main = paste("COVID-19 in", country), ylab = 'Cases') %>%
+  dygraphs::dygraph(x_ts, main = paste("COVID-19 in", area), ylab = 'Cases') %>%
     dygraphs::dyOptions(stackedGraph = TRUE) %>%
     dygraphs::dyRangeSelector()
 }
