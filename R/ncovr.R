@@ -330,7 +330,7 @@ plot_map <- function(x,
         geojsonMap_legendless(
           dat = x,
           mapName = "china",
-          palette=color,
+          palette = color,
           namevar = ~provinceShortName,
           valuevar = ~key_log,
           popup =  paste(
