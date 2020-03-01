@@ -21,6 +21,7 @@ Imports:
   xts,
   dygraphs,
   readr
+  ggplot2
 Suggests:
 Remotes: yiluheihei/leafletCN
 Description: Read and process nCoV data

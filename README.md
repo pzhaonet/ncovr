@@ -48,13 +48,15 @@ ncov <- get_ncov() # 读取 RDS数据（推荐）
 
 ## 画图
 
+leaflet
+
 ``` r
 plot_map(ncov$area)
 ```
 
     ## Warning: Setting row names on a tibble is deprecated.
 
-![](man/figures/map-1.png)<!-- -->
+![](man/figures/leaflet-map-1.png)<!-- -->
 
 ``` r
 # log scale
@@ -63,7 +65,28 @@ plot_map(ncov$area, scale = "log")
 
     ## Warning: Setting row names on a tibble is deprecated.
 
-![](man/figures/map-2.png)<!-- -->
+![](man/figures/leaflet-map-2.png)<!-- -->
+
+ggplot
+
+``` r
+library(ggplot2)
+ncov$area$date <- as.Date(ncovr:::conv_time(ncov$area$updateTime))
+choose_date <- "2020-02-10"
+x <- ncov$area[ncov$area$date <= as.Date(choose_date), ]
+x <- x[!duplicated(x$provinceName), ]
+plot_ggmap(x)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   province = col_character(),
+    ##   city = col_character(),
+    ##   long = col_double(),
+    ##   lat = col_double()
+    ## )
+
+![](man/figures/gg-map-1.png)<!-- -->
 
 更多功能请参看函数的帮助信息
 

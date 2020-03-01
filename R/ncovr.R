@@ -703,6 +703,7 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addt
 #'
 #' @return a ggplot map
 #' @export
+#' @import ggplot2
 #'
 #' @examples
 #' require(ncovr)
@@ -732,56 +733,109 @@ predict_date <- function(province, ncov = c(ncov,ncovChina), ifplot = TRUE, addt
 #'   }
 #' }, movie.name = "map_animation.gif")
 
-plot_ggmap <- function(x, col_name = 'confirmedCount', province_language = 'chinese', show_capitials = TRUE, add_title = NA){
+plot_ggmap <- function(x,
+                       col_name = 'confirmedCount',
+                       province_language = 'chinese',
+                       show_capitials = TRUE,
+                       add_title = NA){
   load(system.file('ProvinceMapDatas.Rda', package = 'ncovr'))
-  city_position = read.csv(system.file("city_position.csv", package = 'ncovr'))
+  city_position <- readr::read_csv(
+    system.file("city_position.csv", package = 'ncovr')
+  )
   x$value <- x[, col_name]
 
-  china_map_virus = left_join(df_China, x[, c('provinceShortName', 'value')], by = c("NAME" = "provinceShortName"))
+  china_map_virus = dplyr::left_join(
+    df_China, x[, c('provinceShortName', 'value')],
+    by = c("NAME" = "provinceShortName")
+  )
 
   p <-
     ggplot() +
-    geom_polygon(data = china_map_virus,
-                 aes(x = long, y = lat, group = interaction(class, group), fill = value),
-                 colour = "black", size = 0.25) +
-    geom_rect(aes(xmin = 124, xmax = 124 + 9.3, ymin = 16 - 0.3, ymax = 16 + 9),
-              fill = NA, colour = "black", size = 0.25) +
-    geom_line(data = df_NanHaiLine, aes(x = long, y = lat, group = ID),
-              colour = "grey40", size = 1) +
-    scale_fill_gradient(low = "white", high = "darkred", na.value = "white", trans = "log", limits = c(1, 10^5), breaks = 10 ^(0:5), labels = c('1', '10', '100', '1,000', '10,000', '100,000'))  +
+    geom_polygon(
+      data = china_map_virus,
+      aes(x = long, y = lat, group = interaction(class, group), fill = value),
+      colour = "black",
+      size = 0.25
+    ) +
+    geom_rect(
+      aes(xmin = 124, xmax = 124 + 9.3, ymin = 16 - 0.3, ymax = 16 + 9),
+      fill = NA,
+      colour = "black",
+      size = 0.25
+    ) +
+    geom_line(
+      data = df_NanHaiLine,
+      aes(x = long, y = lat, group = ID),
+      colour = "grey40",
+      size = 1
+    ) +
+    scale_fill_gradient(
+      low = "white",
+      high = "darkred",
+      na.value = "white",
+      trans = "log",
+      limits = c(1, 10^5),
+      breaks = 10 ^(0:5),
+      labels = c('1', '10', '100', '1,000', '10,000', '100,000')
+    )  +
     coord_map() +
     ylim(14, 54) +
-    theme(axis.title = element_blank(),
-          axis.text = element_blank(),
-          axis.ticks = element_blank(),
-          panel.background = element_blank(),
-          legend.position = c(0.85, 0.4),
-          legend.title = element_blank(),
-          legend.background = element_blank(),
-          plot.title = element_text(hjust = 0.5,
-                                    size = 16,
-                                    face = "bold",
-                                    color = "black"))
-  if(!is.na(add_title)){
+    theme(
+      axis.title = element_blank(),
+      axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      panel.background = element_blank(),
+      legend.position = c(0.85, 0.4),
+      legend.title = element_blank(),
+      legend.background = element_blank(),
+      plot.title = element_text(
+        hjust = 0.5,
+        size = 16,
+        face = "bold",
+        color = "black"
+      )
+    )
+
+  if (!is.na(add_title)) {
     p <- p +
-      geom_text(data = data.frame(long = 105, lat = 50), aes(x = long, y = lat, label = add_title),
-                colour = "black", size = 5)
+      geom_text(
+        data = data.frame(long = 105, lat = 50),
+        aes(x = long, y = lat, label = add_title),
+        colour = "black",
+        size = 5
+      )
   }
 
-  if(show_capitials){
-    p <- p +  geom_point(data = city_position, aes(x = long, y = lat),
-                         colour = "black", size = 1)
+  if (show_capitials){
+    p <- p +
+      geom_point(
+        data = city_position,
+        aes(x = long, y = lat),
+        colour = "black",
+        size = 1
+      )
   }
 
-  if(!is.na(province_language)){
-    if(province_language == 'english') {
-      dic_city <-  readr::read_csv(system.file('china_city_list.csv', package = 'ncovr'))
-      city_position$province <- dic_city$Province_EN[match(city_position$province, dic_city$Province)]
+  if (!is.na(province_language)){
+    if (province_language == 'english') {
+      dic_city <-  readr::read_csv(
+        system.file('china_city_list.csv', package = 'ncovr')
+      )
+      city_position$province <- dic_city$Province_EN[
+        match(city_position$province, dic_city$Province)
+      ]
     }
     p <- p +
-      geom_text(data = city_position, aes(x = long, y = lat, label = province),
-                colour = "black", size = 3, vjust = 0, nudge_y = 0.5)
+      geom_text(
+        data = city_position,
+        aes(x = long, y = lat, label = province),
+        colour = "black",
+        size = 3,
+        vjust = 0,
+        nudge_y = 0.5
+      )
   }
+
   p
 }
 

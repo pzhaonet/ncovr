@@ -40,11 +40,24 @@ ncov <- get_ncov() # 读取 RDS数据（推荐）
 
 ## 画图
 
-```{r map}
+leaflet
+
+```{r leaflet-map}
 plot_map(ncov$area)
 
 # log scale
 plot_map(ncov$area, scale = "log")
+```
+
+ggplot
+
+```{r gg-map}
+library(ggplot2)
+ncov$area$date <- as.Date(ncovr:::conv_time(ncov$area$updateTime))
+choose_date <- "2020-02-10"
+x <- ncov$area[ncov$area$date <= as.Date(choose_date), ]
+x <- x[!duplicated(x$provinceName), ]
+plot_ggmap(x)
 ```
 
 更多功能请参看函数的帮助信息
