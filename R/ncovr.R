@@ -299,7 +299,8 @@ plot_map <- function(x,
 
   count_cut <- c(0, 9, 99, 999, Inf)
 
-  if("provinceName" %in% names(x)) x <- x[x$provinceName != filter,]
+  if ("provinceName" %in% names(x))
+    x <- x[x$provinceName != filter | is.na(x$provinceName),]
   x$key <- x[, key]
 
   if(method == "province"){
@@ -407,6 +408,7 @@ plot_map <- function(x,
   }
 
   if(method == "country"){
+    x <- dplyr::filter(x, !is.na(countryEnglishName))
     if(scale == "cat") {
       x$key_level <- cut(
         x$key,
