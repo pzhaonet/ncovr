@@ -9,7 +9,7 @@ Authors@R: c(
     person("Xinyuan", "Chu", role = "ctb")
   )
 Maintainer: Peng Zhao <pzhao@pzhao.net>
-Depends: R (>= 3.2)
+Depends: R (>= 3.5.0)
 Imports: 
   httr,
   jsonlite,
@@ -17,6 +17,9 @@ Imports:
   leafletCN,
   magrittr,
   dplyr,
+  tidyr,
+  xts,
+  dygraphs,
   readr
 Suggests:
 Description: Read and process nCoV data

@@ -754,3 +754,39 @@ plot_ggmap <- function(x, col_name = 'confirmedCount', province_language = 'chin
   }
   p
 }
+
+
+#' Plot time series of a country's cases
+#'
+#' @param x a datafram with "countryEnglishName", "date", "confirmed", "cured", "dead" columns
+#' @param area name of an selected area
+#' @param area_col the column name of the area in x
+#' @param date_col the column name of the date in x
+#' @param ts_col the column names of the time series in x
+#'
+#' @return a figure
+#' @export
+#' @examples
+#' ncov_raw <- get_ncov()
+#' ncov_raw$area$date <- as.Date(ncovr:::conv_time(ncov_raw$area$updateTime))
+#' x <- ncov_raw$area[, c('countryEnglishName', 'countryName', 'date', 'confirmedCount', 'curedCount', 'deadCount')] %>%
+#'   roup_by(countryEnglishName, date) %>%
+#'   summarise(confirmed = sum(confirmedCount),
+#'             cured = sum(curedCount),
+#'             dead = sum(deadCount)) %>%
+#'   ungroup()
+#' x <- x[!is.na(x$countryEnglishName) & !x$countryEnglishName == 'China', ]
+#' plot_ts(x, area = 'Korea')
+plot_ts <- function(x, area, area_col = "countryEnglishName", date_col = "date", ts_col = c("confirmedCount", "curedCount", "deadCount")){
+  x_ts <- data.frame(Date = seq.Date(from = min(x[, date_col]), to = max(x[, date_col]), by = 1))
+  for(i in ts_col) x_ts[, i] <- NA
+  x <- x[x[, area_col] == area, ]
+  x_ts[match(x[, date_col], x_ts$Date), ts_col] <- x[, ts_col]
+
+  x_ts <- tidyr::fill(x_ts, -1, .direction = "down")
+  x_ts[is.na(x_ts)] <- 0
+  x_ts <- xts::xts(x_ts[, 2:4], x_ts$Date)
+  dygraphs::dygraph(x_ts, main = paste("COVID-19 in", country), ylab = 'Cases') %>%
+    dygraphs::dyOptions(stackedGraph = TRUE) %>%
+    dygraphs::dyRangeSelector()
+}
