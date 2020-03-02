@@ -1,6 +1,6 @@
 ncovr: Read and process nCoV data 新型冠状病毒数据获取和可视化
 ================
-2020-03-01
+2020-03-02
 
 这是一个 R 语言包，使用教程详见 <https://openr.pzhao.org/zh/tags/ncovr/>。这里是个简介。
 
@@ -19,17 +19,13 @@ api 接口和 csv 文件。为了减轻 api 的流量压力， ncovr 每天将�
 
 2.  安装 remotes 包：`install.packages('remotes')`
 
-3.  安装 ncovr
-    包：`remotes::install_github('pzhaonet/ncovr')`
+3.  安装 ncovr 包：`remotes::install_github('pzhaonet/ncovr')`
 
 ## 获取数据
 
 ``` r
 Sys.setlocale('LC_CTYPE', 'Chinese') # windows 用户设置中文环境
 ```
-
-    ## Warning in Sys.setlocale("LC_CTYPE", "Chinese"): OS reports request to set
-    ## locale to "Chinese" cannot be honored
 
     ## [1] ""
 
@@ -54,13 +50,11 @@ ncov <- get_ncov() # 读取 RDS数据（推荐）
 
 ## 国家地图:省级疫情图
 
-leaflet
+按省级显示
 
 ``` r
 plot_map(ncov$area)
 ```
-
-    ## Warning: Setting row names on a tibble is deprecated.
 
 ![](man/figures/leaflet-map-1.png)<!-- -->
 
@@ -69,9 +63,15 @@ plot_map(ncov$area)
 plot_map(ncov$area, scale = "log")
 ```
 
-    ## Warning: Setting row names on a tibble is deprecated.
-
 ![](man/figures/leaflet-map-2.png)<!-- -->
+
+按城市显示
+
+``` r
+plot_map(ncov$area, method = "city", scale = "log")
+```
+
+![](man/figures/map-city-1.png)<!-- -->
 
 ggplot
 
