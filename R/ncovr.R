@@ -356,8 +356,13 @@ plot_map <- function(x,
   if(method == "city") {
     x_city <- dplyr::bind_rows(x$cities)
     if(nrow(x_city) != 0) x_city <- x_city[, 1:5]
-    x_area <- x[, 2:6]
-    names(x_area)[1] <- 'cityName'
+    x_area <- dplyr::select(
+      x,
+      cityName = provinceName,
+      dplyr::one_of(setdiff(names(x_city), "cityName"))
+    )
+    # x_area <- x[, 2:6]
+    # names(x_area)[1] <- 'cityName'
     x_cities <- rbind(x_city, x_area)
     cities <- leafletCN::regionNames(mapName = 'city')
     x_cities <- x_cities[x_cities$cityName %in% cities, ]

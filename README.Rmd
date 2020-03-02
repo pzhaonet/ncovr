@@ -42,13 +42,20 @@ ncov <- get_ncov() # 读取 RDS数据（推荐）
 
 ## 国家地图:省级疫情图
 
-leaflet
+按省级显示
 
 ```{r leaflet-map}
 plot_map(ncov$area)
 
 # log scale
 plot_map(ncov$area, scale = "log")
+```
+
+按城市显示
+
+```{r map-city}
+plot_map(ncov$area, method = "city", scale = "log")
+
 ```
 
 ggplot
