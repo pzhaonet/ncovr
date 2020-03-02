@@ -127,6 +127,34 @@ plot_map(
 )
 ```
 
+
+## ts
+
+```{r ts}
+x_ts <- ncov$area[, c('countryEnglishName', 'countryName', 'date', 'confirmedCount', 'curedCount', 'deadCount')] %>% 
+  dplyr::group_by(countryEnglishName, date) %>% 
+  dplyr::summarise(
+    confirmed = max(confirmedCount), 
+    cured = max(curedCount), 
+    dead = max(deadCount)) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::filter(!is.na(countryEnglishName) & !countryEnglishName == 'China') %>% 
+  as.data.frame()
+loc <- which(x_ts$countryEnglishName %in% countryname$ncovr)
+x_ts$countryEnglishName[loc] <-
+  countryname$leafletNC[
+    match(x_ts$countryEnglishName[loc], countryname$ncovr)
+  ]
+
+plot_ts(
+  x_ts, 
+  area = "Italy", 
+  area_col = "countryEnglishName", 
+  date_col = "date", 
+  ts_col = c("confirmed", "cured", "dead")
+) 
+```
+
 更多功能请参看函数的帮助信息
 
 # License

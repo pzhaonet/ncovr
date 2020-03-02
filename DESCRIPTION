@@ -20,7 +20,7 @@ Imports:
   tidyr,
   xts,
   dygraphs,
-  readr
+  readr,
   ggplot2
 Suggests:
 Remotes: yiluheihei/leafletCN
