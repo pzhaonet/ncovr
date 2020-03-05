@@ -127,8 +127,9 @@ conv_ncov <- function(ncov){
 ##' @param ... other paramter pass to the color mapping function
 ##'
 ##' @examples
+##' \dontrun {
 ##' dat = data.frame(name = regionNames("china"),
-##'                  value = runif(34))
+##'                  value = runif(35))
 ##' geojsonMap(dat,"china")
 ##'
 ##' dat$value2 = cut(dat$value, c(0, 0.25, 0.5, 1))
@@ -143,6 +144,7 @@ conv_ncov <- function(ncov){
 ##'   valuevar = ~value2,
 ##'   palette = topo.colors(3),
 ##'   colorMethod="factor")
+##' }
 ##' @export
 geojsonMap_legendless = function(dat,
                                  mapName,
@@ -286,7 +288,7 @@ plot_map <- function(x,
   method <- match.arg(method)
 
   ## add nanhai
-  nanhai_label <- dplyr::filter(leafletCN::mapNames, name_en == "Nanhai")
+  nanhai_label <- dplyr::filter(leafletCN::leafletcn.map.names, name_en == "Nanhai")
   nanhai <- data.frame(
     provinceName = nanhai_label$name,
     provinceShortName = nanhai_label$name,

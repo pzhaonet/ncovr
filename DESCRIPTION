@@ -11,19 +11,21 @@ Authors@R: c(
 Maintainer: Peng Zhao <pzhao@pzhao.net>
 Depends: R (>= 3.5.0)
 Imports: 
-  httr,
-  jsonlite,
-  leaflet,
-  leafletCN,
-  magrittr,
-  dplyr,
-  tidyr,
-  xts,
-  dygraphs,
-  readr,
-  ggplot2
-Suggests:
-Remotes: yiluheihei/leafletCN
+    httr,
+    jsonlite,
+    leaflet,
+    leafletCN,
+    magrittr,
+    dplyr,
+    tidyr,
+    xts,
+    dygraphs,
+    readr,
+    ggplot2,
+    rnaturalearth,
+    rnaturalearthhires
+Remotes: yiluheihei/leafletCN,
+    ropensci/rnaturalearthhires
 Description: Read and process nCoV data
 License: GPL-3 | file LICENSE
 URL: https://github.com/pzhaonet/ncovr
