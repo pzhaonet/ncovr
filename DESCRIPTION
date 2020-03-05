@@ -20,8 +20,10 @@ Imports:
   tidyr,
   xts,
   dygraphs,
-  readr
+  readr,
+  ggplot2
 Suggests:
+Remotes: yiluheihei/leafletCN
 Description: Read and process nCoV data
 License: GPL-3 | file LICENSE
 URL: https://github.com/pzhaonet/ncovr
