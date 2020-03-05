@@ -1,6 +1,6 @@
 ncovr: Read and process nCoV data 新型冠状病毒数据获取和可视化
 ================
-2020-03-02
+2020-03-05
 
 这是一个 R 语言包，使用教程详见 <https://openr.pzhao.org/zh/tags/ncovr/>。这里是个简介。
 
@@ -181,6 +181,88 @@ plot_ts(
 ```
 
 ![](man/figures/ts-1.png)<!-- -->
+
+## 国外疫情图
+
+### 韩国疫情图
+
+``` r
+korea_ncov <- get_foreign_ncov("韩国")
+plot_foreign_map(korea_ncov, "korea")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   name = col_character(),
+    ##   name_zh = col_character(),
+    ##   provinceName = col_character(),
+    ##   provinceEnglishName = col_character()
+    ## )
+
+![](man/figures/korea-map-1.png)<!-- -->
+
+### 日本疫情图
+
+``` r
+jp_ncov <- get_foreign_ncov("日本")
+plot_foreign_map(jp_ncov, "japan")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   name = col_character(),
+    ##   name_zh = col_character(),
+    ##   provinceName = col_character(),
+    ##   provinceEnglishName = col_character()
+    ## )
+
+![](man/figures/jp-map-1.png)<!-- -->
+
+### 伊朗疫情图
+
+``` r
+iran_ncov <- get_foreign_ncov("伊朗")
+plot_foreign_map(iran_ncov, "iran")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   name = col_character(),
+    ##   name_zh = col_character(),
+    ##   provinceName = col_character(),
+    ##   provinceEnglishName = col_character()
+    ## )
+
+![](man/figures/iran-map-1.png)<!-- -->
+
+### 意大利疫情图
+
+``` r
+italy_ncov <- get_foreign_ncov("意大利")
+plot_foreign_map(italy_ncov, "italy")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   name = col_character(),
+    ##   name_zh = col_character(),
+    ##   provinceName = col_character(),
+    ##   provinceEnglishName = col_character()
+    ## )
+
+![](man/figures/italy-map-1.png)<!-- -->
+
+### 直接画这四个国家的疫情图
+
+``` r
+foreign_countries <- c("韩国", "伊朗", "日本", "意大利")
+names(foreign_countries) <- c("korea", "iran", "japan", "italy")
+htmltools::tagList(purrr::imap(
+  foreign_countries, 
+  ~ get_foreign_ncov(.x) %>% 
+    plot_foreign_map(.y)
+))
+```
 
 更多功能请参看函数的帮助信息
 

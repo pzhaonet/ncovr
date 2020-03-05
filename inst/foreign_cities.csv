@@ -1,0 +1,116 @@
+name,name_zh,provinceName,provinceEnglishName
+korea,韩国,釜山,Busan
+korea,韩国,忠清北道,Chungcheongbuk-do
+korea,韩国,忠清南道,Chungcheongnam-do
+korea,韩国,大邱,Daegu
+korea,韩国,大田,Daejeon
+korea,韩国,江原道,Gangwon-do
+korea,韩国,光州,Gwangju
+korea,韩国,京畿道,Gyeonggi-do
+korea,韩国,庆尚北道,Gyeongsangbuk-do
+korea,韩国,庆尚南道,Gyeongsangnam-do
+korea,韩国,仁川,Incheon
+korea,韩国,济州岛,Jeju-do
+korea,韩国,全罗北道,Jeollabuk-do
+korea,韩国,全罗南道,Jeollanam-do
+korea,韩国,世宗,Sejong
+korea,韩国,首尔,Seoul
+korea,韩国,蔚山,Ulsan
+japan,日本,北海道,Hokkaido
+japan,日本,东京都,Tokyo
+japan,日本,和歌山县,Wakayama
+japan,日本,京都,Kyoto
+japan,日本,大阪,Osaka
+japan,日本,千叶县,Chiba
+japan,日本,神奈川县,Kanagawa
+japan,日本,爱知县,Aichi
+japan,日本,奈良县,Nara
+japan,日本,三重县,Mie
+japan,日本,冲绳县,Okinawa
+japan,日本,青森县,Aomori
+japan,日本,岩手县,Iwate
+japan,日本,宫城县,Miyagi
+japan,日本,福岛县,Fukushima
+japan,日本,茨城县,Ibaraki
+japan,日本,栃木县,Tochigi
+japan,日本,群马县,Gunma
+japan,日本,埼玉县,Saitama
+japan,日本,新潟县,Niigata
+japan,日本,富山县,Toyama
+japan,日本,石川县,Ishikawa
+japan,日本,福井县,Fukui
+japan,日本,长野县,Nagano
+japan,日本,岐阜县,Gifu
+japan,日本,秋田县,Akita
+japan,日本,滋贺县,Shiga
+japan,日本,兵库县,Hyogo
+japan,日本,鸟取县,Tottori
+japan,日本,岛根县,Shimane
+japan,日本,冈山县,Okayama
+japan,日本,广岛县,Hiroshima
+japan,日本,山口县,Yamaguchi
+japan,日本,德岛县,Tokushima
+japan,日本,香川县,Kagawa
+japan,日本,高知县,Kochi
+japan,日本,佐贺县,Saga
+japan,日本,长崎县,Nagasaki
+japan,日本,熊本县,Kumamoto
+japan,日本,宫崎县,Miyazaki
+japan,日本,鹿儿岛县,Kagoshima
+japan,日本,爱媛县,Ehime
+japan,日本,福冈县,Fukuoka
+japan,日本,大分县,Oita
+japan,日本,静冈县,Shizuoka
+japan,日本,山形县,Yamagata
+japan,日本,山梨县,Yamanashi
+iran,伊朗,厄尔布尔士,Alborz
+iran,伊朗,阿尔达比勒,Ardebil
+iran,伊朗,布什尔,Bushehr
+iran,伊朗,恰哈马哈勒-巴赫蒂亚里,Chahar Mahall and Bakhtiari
+iran,伊朗,东阿塞拜疆,East Azarbaijan
+iran,伊朗,法尔斯,Fars
+iran,伊朗,吉兰,Gilan
+iran,伊朗,戈勒斯坦,Golestan
+iran,伊朗,哈马丹,Hamadan
+iran,伊朗,霍尔木兹甘,Hormozgan
+iran,伊朗,伊拉姆,Ilam
+iran,伊朗,伊斯法罕,Esfahan
+iran,伊朗,克尔曼,Kerman
+iran,伊朗,克尔曼沙汗,Kermanshah
+iran,伊朗,胡齐斯坦,Khuzestan
+iran,伊朗,科吉卢耶-博韦艾哈迈德,Kohgiluyeh and Buyer Ahmad
+iran,伊朗,库尔德斯坦,Kordestan
+iran,伊朗,洛雷斯坦,Lorestan
+iran,伊朗,中央省,Markazi
+iran,伊朗,马赞德兰,Mazandaran
+iran,伊朗,北呼罗珊,North Khorasan
+iran,伊朗,加兹温,Qazvin
+iran,伊朗,库姆,Qom
+iran,伊朗,呼罗珊,Razavi Khorasan
+iran,伊朗,塞姆南,Semnan
+iran,伊朗,锡斯坦-俾路支斯坦,Sistan and Baluchestan
+iran,伊朗,南呼罗珊,South Khorasan
+iran,伊朗,德黑兰,Tehran
+iran,伊朗,西阿塞拜疆,West Azarbaijan
+iran,伊朗,亚兹德,Yazd
+iran,伊朗,赞詹,Zanjan
+italy,意大利,利古里亚,Liguria
+italy,意大利,阿布鲁佐,Abruzzo
+italy,意大利,瓦莱达奥斯塔,Aosta Valley
+italy,意大利,普利亚,Apulia
+italy,意大利,巴斯利卡塔,Basilicata
+italy,意大利,卡拉布里亚,Calabria
+italy,意大利,坎帕尼亚,Campania
+italy,意大利,艾米利亚-罗马涅,Emilia-Romagna
+italy,意大利,弗留利-威尼斯朱利亚,Friuli Venezia Giulia
+italy,意大利,拉齐奥,Lazio
+italy,意大利,伦巴第,Lombardy
+italy,意大利,马尔凯,Marche
+italy,意大利,莫利塞,Molise
+italy,意大利,皮埃蒙特,Piemont
+italy,意大利,撒丁,Sardinia
+italy,意大利,西西里,Sicily
+italy,意大利,特伦蒂诺-上阿迪杰,Trentino-Alto Adige - Südtirol
+italy,意大利,托斯卡纳,Tuscany
+italy,意大利,翁布里亚,Umbria
+italy,意大利,威尼托,Veneto

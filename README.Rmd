@@ -155,6 +155,48 @@ plot_ts(
 ) 
 ```
 
+## 国外疫情图
+
+### 韩国疫情图
+
+```{r korea-map}
+korea_ncov <- get_foreign_ncov("韩国")
+plot_foreign_map(korea_ncov, "korea")
+```
+
+### 日本疫情图
+
+```{r jp-map}
+jp_ncov <- get_foreign_ncov("日本")
+plot_foreign_map(jp_ncov, "japan")
+```
+
+### 伊朗疫情图
+
+```{r iran-map}
+iran_ncov <- get_foreign_ncov("伊朗")
+plot_foreign_map(iran_ncov, "iran")
+```
+
+### 意大利疫情图 
+
+```{r italy-map}
+italy_ncov <- get_foreign_ncov("意大利")
+plot_foreign_map(italy_ncov, "italy")
+```
+
+### 直接画这四个国家的疫情图
+
+```{r four-country-map,eval=FALSE}
+foreign_countries <- c("韩国", "伊朗", "日本", "意大利")
+names(foreign_countries) <- c("korea", "iran", "japan", "italy")
+htmltools::tagList(purrr::imap(
+  foreign_countries, 
+  ~ get_foreign_ncov(.x) %>% 
+    plot_foreign_map(.y)
+))
+```
+
 更多功能请参看函数的帮助信息
 
 # License
