@@ -31,7 +31,7 @@ ncovr 包获取数据的主要途径是 [BlankerL/DXY-2019-nCoV-Crawler](https:/
 ## 获取数据
 
 ```{r data}
-Sys.setlocale('LC_CTYPE', 'Chinese') # windows 用户设置中文环境
+# Sys.setlocale('LC_CTYPE', 'Chinese') # windows 用户设置中文环境
 require("ncovr")
 require("leafletCN")
 
@@ -40,6 +40,28 @@ ncov <- get_ncov() # 读取 RDS数据（推荐）
 # get_ncov(method = 'csv') # 从 csv 文件读取（推荐）
 # get_ncov(method = 'api') # 从 api 接口读取
 ```
+
+另外提供了下载数据的函数`get_ncov2()`，定义新的 ncov 类(实际也是data frame)，提供了`subset()`方法, 
+用于提取 ncov 子集，参数可以是省份、china或者world
+
+```{r get-nocv2}
+ncov2 <- get_ncov2()
+ncov2
+# 湖北 ncov, 按市统计
+hubei_ncov <- ncov2["湖北"]
+hubei_ncov
+head(data.frame(hubei_ncov), 5)
+
+# china，按省统计
+china_ncov <- ncov2["china"]
+head(data.frame(china_ncov), 5)
+
+# world， 按国家统计
+world_ncov <- ncov2["world"]
+head(data.frame(world_ncov), 5)
+```
+
+
 
 ## 国家地图:省级疫情图
 
