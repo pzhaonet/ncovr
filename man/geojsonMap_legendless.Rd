@@ -42,7 +42,6 @@ geojsonMap_legendless(dat, mapName, namevar=NULL, valuevar=NULL,
 Modified from leafletCN::geojsonMap()
 }
 \examples{
-\dontrun {
 dat = data.frame(name = regionNames("china"),
                  value = runif(35))
 geojsonMap(dat,"china")
@@ -59,5 +58,4 @@ geojsonMap(dat,"china",
   valuevar = ~value2,
   palette = topo.colors(3),
   colorMethod="factor")
-}
 }

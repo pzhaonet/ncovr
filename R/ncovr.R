@@ -126,8 +126,8 @@ conv_ncov <- function(ncov){
 ##' @param tileType function to define tile like amap or leaflet::addTiles
 ##' @param ... other paramter pass to the color mapping function
 ##'
+##' @export
 ##' @examples
-##' \dontrun {
 ##' dat = data.frame(name = regionNames("china"),
 ##'                  value = runif(35))
 ##' geojsonMap(dat,"china")
@@ -144,8 +144,6 @@ conv_ncov <- function(ncov){
 ##'   valuevar = ~value2,
 ##'   palette = topo.colors(3),
 ##'   colorMethod="factor")
-##' }
-##' @export
 geojsonMap_legendless = function(dat,
                                  mapName,
                                  namevar=NULL,
