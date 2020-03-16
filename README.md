@@ -275,6 +275,20 @@ plot_map(
 
 ![](man/figures/world-map-1.png)<!-- -->
 
+更进一步
+
+``` r
+plot_world_map(world_ncov)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   name = col_character(),
+    ##   name_zh = col_character()
+    ## )
+
+![](man/figures/plot-world-map-1.png)<!-- -->
+
 ## ts
 
 ``` r

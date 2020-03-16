@@ -175,6 +175,12 @@ plot_map(
 )
 ```
 
+更进一步
+
+```{r plot-world-map}
+plot_world_map(world_ncov)
+```
+
 
 ## ts
 
