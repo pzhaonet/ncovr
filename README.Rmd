@@ -35,7 +35,7 @@ ncovr 包获取数据的主要途径是 [BlankerL/DXY-2019-nCoV-Crawler](https:/
 require("ncovr")
 require("leafletCN")
 
-ncov <- get_ncov() # 读取 RDS数据（推荐）
+ncov <- get_ncov() # 读取 RDS数据（推荐）国内从github读取数据不稳定!
 
 # get_ncov(method = 'csv') # 从 csv 文件读取（推荐）
 # get_ncov(method = 'api') # 从 api 接口读取
@@ -63,7 +63,7 @@ head(data.frame(world_ncov), 5)
 
 
 
-## 国家地图:省级疫情图
+## 国家地图
 
 按省级显示
 
@@ -90,6 +90,21 @@ choose_date <- "2020-02-10"
 x <- ncov$area[ncov$area$date <= as.Date(choose_date), ]
 x <- x[!duplicated(x$provinceName), ]
 plot_ggmap(x)
+```
+
+## 省疫情图
+
+湖北省疫情图
+
+```{r hubei}
+# plot_province_map(ncov2, "湖北省")，或
+plot_province_map(hubei_ncov, "湖北省", bins = c(1, 100, 200, 500, 1000, 10000))
+```
+
+或直接基于ncov作图，无需提前取各省ncov数据，天津疫情图
+
+```{r tianjin}
+plot_province_map(ncov2, "天津市", bins = c(1, 10, 20, 50))
 ```
 
 ## 世界地图:各国疫情图
