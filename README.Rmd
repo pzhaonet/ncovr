@@ -74,6 +74,17 @@ plot_map(ncov$area)
 plot_map(ncov$area, scale = "log")
 ```
 
+更进一步使用`plot_china_map()`可通过设置`bins`参数控制如何分组以填充不同的颜色，
+自动把ncov为0的地区（包括南海驻岛）填充为白色
+
+```{r plot-china-map}
+plot_china_map(
+  china_ncov, 
+  bins = c(1, 100, 500, 1000, 10000), 
+  legend_position = "bottomleft"
+)
+```
+
 按城市显示
 
 ```{r map-city}

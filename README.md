@@ -52,7 +52,7 @@ ncov2
 ```
 
     ## All COVID 2019 Data
-    ## Updated at 2020-03-16 02:44:14 
+    ## Updated at 2020-03-16 15:44:16 
     ## From https://github.com/yiluheihei/nCoV-2019-Data
 
 ``` r
@@ -151,6 +151,19 @@ plot_map(ncov$area, scale = "log")
 ```
 
 ![](man/figures/leaflet-map-2.png)<!-- -->
+
+更进一步使用`plot_china_map()`可通过设置`bins`参数控制如何分组以填充不同的颜色，
+自动把ncov为0的地区（包括南海驻岛）填充为白色
+
+``` r
+plot_china_map(
+  china_ncov, 
+  bins = c(1, 100, 500, 1000, 10000), 
+  legend_position = "bottomleft"
+)
+```
+
+![](man/figures/plot-china-map-1.png)<!-- -->
 
 按城市显示
 
