@@ -1,29 +1,44 @@
-#' Download ncov 2019 area and overall data from http://lab.isaaclin.cn/nCoV/
+#' Download ncov 2019 area and overall data from http://lab.isaaclin.cn/nCoV/ or
+#' https://github.com/yiluheihei/nCoV-2019-Data
 #'
 #' @param latest logical, download the latest or all ncov data, default \code{TRUE}
 #'
 #' @export
-get_ncov2 <- function(latest = TRUE) {
-  api <- "https://lab.isaaclin.cn/nCoV/api/"
-  para <- ifelse(latest, "?latest=1", "?latest=0")
+get_ncov2 <- function(latest = TRUE, method = c("ncov", "api")) {
+  method <- match.arg(method)
 
-  ncov <- jsonlite::fromJSON(paste0(api, "area", para))$results
-  ncov$updateTime <- conv_time(ncov$updateTime)
-  ncov <- purrr::map_dfr(
-    1:nrow(ncov),
-    ~ unnest_province_ncov(ncov[.x, ])
-  )
+  if (method == "api") {
+    api <- "https://lab.isaaclin.cn/nCoV/api/"
+    para <- ifelse(latest, "?latest=1", "?latest=0")
 
-  overall <- jsonlite::fromJSON(paste0(api, "overall", para))$results
-  overall$updateTime <- conv_time(overall$updateTime)
+    ncov <- jsonlite::fromJSON(paste0(api, "area", para))$results
+    ncov$updateTime <- conv_time(ncov$updateTime)
+    ncov <- purrr::map_dfr(
+      1:nrow(ncov),
+      ~ unnest_province_ncov(ncov[.x, ])
+    )
 
-  structure(
-    ncov,
-    overall = overall,
-    class = c("ncov", "data.frame"),
-    type = "All",
-    from = api
-  )
+    Sys.sleep(5)
+
+    overall <- jsonlite::fromJSON(paste0(api, "overall", para))$results
+    overall$updateTime <- conv_time(overall$updateTime)
+
+    ncov <- structure(
+      ncov,
+      overall = overall,
+      class = c("ncov", "data.frame"),
+      type = "All",
+      from = api
+    )
+  } else {
+    if (latest) {
+      ncov <- readRDS(gzcon(url("https://github.com/yiluheihei/nCoV-2019-Data/raw/master/ncov_latest.RDS")))
+    } else {
+      ncov <- readRDS(gzcon(url("https://github.com/yiluheihei/nCoV-2019-Data/raw/master/ncov.RDS")))
+    }
+  }
+
+  ncov
 }
 
 # unnest the cities data
@@ -154,6 +169,7 @@ print.ncov <- function(x) {
 #' Subset china ncov
 #' @noRd
 subset_china_ncov <- function(ncov, latest = TRUE) {
+  ncov <- as.data.frame(ncov)
   china_ncov <- dplyr::filter(
     ncov,
     countryEnglishName == "China"
@@ -168,7 +184,8 @@ subset_china_ncov <- function(ncov, latest = TRUE) {
     china_ncov,
     dplyr::starts_with("province"),
     currentConfirmedCount:updateTime
-  )
+  ) %>%
+    dplyr::arrange(desc(updateTime))
 
   china_ncov
 }
@@ -176,11 +193,11 @@ subset_china_ncov <- function(ncov, latest = TRUE) {
 #' Subset province ncov, as well as foreign country
 #' @noRd
 subset_province_ncov <- function(ncov, i, latest = TRUE) {
+  ncov <- as.data.frame(ncov)
   province_ncov <- dplyr::filter(
     ncov,
     provinceName == i | provinceEnglishName == i | provinceShortName == i,
   )
-
 
   if (latest) {
     province_ncov <- dplyr::filter(
@@ -204,7 +221,7 @@ subset_province_ncov <- function(ncov, i, latest = TRUE) {
 subset_world_ncov <- function(ncov, latest = TRUE) {
   # ncov in other countries except china
   other_ncov <- dplyr::filter(
-    ncov,
+    as.data.frame(ncov),
     countryEnglishName != "China"
   )
 

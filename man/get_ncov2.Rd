@@ -2,13 +2,15 @@
 % Please edit documentation in R/ncov-data.R
 \name{get_ncov2}
 \alias{get_ncov2}
-\title{Download ncov 2019 area and overall data from http://lab.isaaclin.cn/nCoV/}
+\title{Download ncov 2019 area and overall data from http://lab.isaaclin.cn/nCoV/ or
+https://github.com/yiluheihei/nCoV-2019-Data}
 \usage{
-get_ncov2(latest = TRUE)
+get_ncov2(latest = TRUE, method = c("ncov", "api"))
 }
 \arguments{
 \item{latest}{logical, download the latest or all ncov data, default \code{TRUE}}
 }
 \description{
-Download ncov 2019 area and overall data from http://lab.isaaclin.cn/nCoV/
+Download ncov 2019 area and overall data from http://lab.isaaclin.cn/nCoV/ or
+https://github.com/yiluheihei/nCoV-2019-Data
 }

@@ -1,6 +1,6 @@
 ncovr: Read and process nCoV data 新型冠状病毒数据获取和可视化
 ================
-2020-03-09
+2020-03-16
 
 这是一个 R 语言包，使用教程详见 <https://openr.pzhao.org/zh/tags/ncovr/>。这里是个简介。
 
@@ -37,7 +37,7 @@ require("leafletCN")
     ## Loading required package: leafletCN
 
 ``` r
-ncov <- get_ncov() # 读取 RDS数据（推荐）
+ncov <- get_ncov() # 读取 RDS数据（推荐）国内从github读取数据不稳定!
 
 # get_ncov(method = 'csv') # 从 csv 文件读取（推荐）
 # get_ncov(method = 'api') # 从 api 接口读取
@@ -52,8 +52,8 @@ ncov2
 ```
 
     ## All COVID 2019 Data
-    ## Updated at 2020-03-09 12:00:55 
-    ## From https://lab.isaaclin.cn/nCoV/api/
+    ## Updated at 2020-03-16 15:44:16 
+    ## From https://github.com/yiluheihei/nCoV-2019-Data
 
 ``` r
 # 湖北 ncov, 按市统计
@@ -62,8 +62,8 @@ hubei_ncov
 ```
 
     ## Hubei COVID 2019 Data
-    ## Updated at 2020-03-09 11:42:37 
-    ## From https://lab.isaaclin.cn/nCoV/api/
+    ## Updated at 2020-03-16 13:54:01 
+    ## From https://github.com/yiluheihei/nCoV-2019-Data
 
 ``` r
 head(data.frame(hubei_ncov), 5)
@@ -74,19 +74,19 @@ head(data.frame(hubei_ncov), 5)
     ## 2         Xiaogan     孝感       湖北省              湖北               Hubei
     ## 3           Ezhou     鄂州       湖北省              湖北               Hubei
     ## 4         Suizhou     随州       湖北省              湖北               Hubei
-    ## 5         Yichang     宜昌       湖北省              湖北               Hubei
+    ## 5        Jingzhou     荆州       湖北省              湖北               Hubei
     ##   currentConfirmedCount confirmedCount suspectedCount curedCount deadCount
-    ## 1                 16572          49948              0      30987      2389
-    ## 2                   335           3518              0       3057       126
-    ## 3                   310           1394              0       1030        54
-    ## 4                   159           1307              0       1104        44
-    ## 5                   144            931              0        753        34
+    ## 1                  9102          50003              0      38432      2469
+    ## 2                   125           3518              0       3266       127
+    ## 3                    62           1394              0       1275        57
+    ## 4                    41           1307              0       1221        45
+    ## 5                    38           1580              0       1492        50
     ##            updateTime
-    ## 1 2020-03-09 11:42:37
-    ## 2 2020-03-09 11:42:37
-    ## 3 2020-03-09 11:42:37
-    ## 4 2020-03-09 11:42:37
-    ## 5 2020-03-09 11:42:37
+    ## 1 2020-03-16 13:54:01
+    ## 2 2020-03-16 13:54:01
+    ## 3 2020-03-16 13:54:01
+    ## 4 2020-03-16 13:54:01
+    ## 5 2020-03-16 13:54:01
 
 ``` r
 # china，按省统计
@@ -94,18 +94,18 @@ china_ncov <- ncov2["china"]
 head(data.frame(china_ncov), 5)
 ```
 
-    ##   provinceName provinceShortName provinceEnglishName currentConfirmedCount
-    ## 1       安徽省              安徽               Anhui                     0
-    ## 2         澳门              澳门               Macau                     0
-    ## 3       北京市              北京             Beijing                   105
-    ## 4       重庆市              重庆           Chongqing                    42
-    ## 5       福建省              福建              Fujian                     0
+    ##     provinceName provinceShortName provinceEnglishName currentConfirmedCount
+    ## 1           中国              中国               China                  9951
+    ## 2         湖北省              湖北               Hubei                  9557
+    ## 3         辽宁省              辽宁            Liaoning                     9
+    ## 4 广西壮族自治区              广西             Guangxi                     2
+    ## 5         海南省              海南              Hainan                     1
     ##   confirmedCount suspectedCount curedCount deadCount          updateTime
-    ## 1            990              0        984         6 2020-03-08 05:19:01
-    ## 2             10              0         10         0 2020-03-06 10:21:01
-    ## 3            428              0        315         8 2020-03-09 04:09:24
-    ## 4            576              0        528         6 2020-03-09 07:13:20
-    ## 5            296              0        295         1 2020-03-07 13:54:02
+    ## 1          81099              0      67930      3218 2020-03-16 13:54:38
+    ## 2          67798              0      55142      3099 2020-03-16 13:54:01
+    ## 3            125              0        115         1 2020-03-16 13:54:01
+    ## 4            252              0        248         2 2020-03-16 13:49:01
+    ## 5            168              0        161         6 2020-03-16 13:49:01
 
 ``` r
 # world， 按国家统计
@@ -122,20 +122,20 @@ world_ncov <- ncov2["world"]
 head(data.frame(world_ncov), 5)
 ```
 
-    ##   countryEnglishName countryName currentConfirmedCount confirmedCount
-    ## 1        Afghanistan      阿富汗                     4              4
-    ## 2            Algeria  阿尔及利亚                    19             19
-    ## 3            Andorra      安道尔                     1              1
-    ## 4          Argentina      阿根廷                    11             12
-    ## 5            Armenia    亚美尼亚                     1              1
+    ##    countryEnglishName    countryName currentConfirmedCount confirmedCount
+    ## 1         Afghanistan         阿富汗                    16             16
+    ## 2             Albania     阿尔巴尼亚                    41             42
+    ## 3             Algeria     阿尔及利亚                    41             54
+    ## 4             Andorra         安道尔                     1              2
+    ## 5 Antigua and Barbuda 安提瓜和巴布达                     1              1
     ##   suspectedCount curedCount deadCount          updateTime
-    ## 1              0          0         0 2020-03-09 04:56:18
-    ## 2              0          0         0 2020-03-09 04:56:18
-    ## 3              0          0         0 2020-03-05 02:39:09
-    ## 4              0          0         1 2020-03-09 10:07:37
-    ## 5              0          0         0 2020-03-05 02:39:09
+    ## 1              0          0         0 2020-03-16 06:53:45
+    ## 2              0          0         1 2020-03-16 06:53:45
+    ## 3              0         10         3 2020-03-16 06:53:45
+    ## 4              0          1         0 2020-03-16 06:53:45
+    ## 5              0          0         0 2020-03-16 06:53:45
 
-## 国家地图:省级疫情图
+## 国家地图
 
 按省级显示
 
@@ -151,6 +151,19 @@ plot_map(ncov$area, scale = "log")
 ```
 
 ![](man/figures/leaflet-map-2.png)<!-- -->
+
+更进一步使用`plot_china_map()`可通过设置`bins`参数控制如何分组以填充不同的颜色，
+自动把ncov为0的地区（包括南海驻岛）填充为白色
+
+``` r
+plot_china_map(
+  china_ncov, 
+  bins = c(1, 100, 500, 1000, 10000), 
+  legend_position = "bottomleft"
+)
+```
+
+![](man/figures/plot-china-map-1.png)<!-- -->
 
 按城市显示
 
@@ -180,6 +193,25 @@ plot_ggmap(x)
     ## )
 
 ![](man/figures/gg-map-1.png)<!-- -->
+
+## 省疫情图
+
+湖北省疫情图
+
+``` r
+# plot_province_map(ncov2, "湖北省")，或
+plot_province_map(hubei_ncov, "湖北省", bins = c(1, 100, 200, 500, 1000, 10000))
+```
+
+![](man/figures/hubei-1.png)<!-- -->
+
+或直接基于ncov作图，无需提前取各省ncov数据，天津疫情图
+
+``` r
+plot_province_map(ncov2, "天津市", bins = c(1, 10, 20, 50))
+```
+
+![](man/figures/tianjin-1.png)<!-- -->
 
 ## 世界地图:各国疫情图
 
@@ -238,7 +270,24 @@ plot_map(
 )
 ```
 
+    ## New names:
+    ## * `` -> ...76
+
 ![](man/figures/world-map-1.png)<!-- -->
+
+更进一步
+
+``` r
+plot_world_map(world_ncov)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   name = col_character(),
+    ##   name_zh = col_character()
+    ## )
+
+![](man/figures/plot-world-map-1.png)<!-- -->
 
 ## ts
 
