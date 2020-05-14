@@ -27,10 +27,10 @@ a figure.
 Previous version of predict_date()
 }
 \examples{
-Sys.setlocale('LC_CTYPE', 'Chinese')
-ncov <- get_ncov()#Get the data
-ncovChina <-get_ncov('china')
-predict_date(province = "jiangsuinchinese",  ncov = ncov)
-predict_date(province = "meiguoinchinese",  ncov = ncov)
-predict_date(province = "zhongguoinchinese",  ncov = ncovChina)
+Sys.setlocale("LC_CTYPE", "Chinese")
+ncov <- get_ncov()  #Get the data
+ncovChina <- get_ncov("china")
+predict_date(province = "jiangsuinchinese", ncov = ncov)
+predict_date(province = "meiguoinchinese", ncov = ncov)
+predict_date(province = "zhongguoinchinese", ncov = ncovChina)
 }

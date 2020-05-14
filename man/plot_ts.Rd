@@ -32,12 +32,11 @@ Plot time series of a country's cases
 \examples{
 ncov_raw <- get_ncov()
 ncov_raw$area$date <- as.Date(ncovr:::conv_time(ncov_raw$area$updateTime))
-x <- ncov_raw$area[, c('countryEnglishName', 'countryName', 'date', 'confirmedCount', 'curedCount', 'deadCount')] \%>\%
-  roup_by(countryEnglishName, date) \%>\%
-  summarise(confirmed = sum(confirmedCount),
-            cured = sum(curedCount),
-            dead = sum(deadCount)) \%>\%
-  ungroup()
-x <- x[!is.na(x$countryEnglishName) & !x$countryEnglishName == 'China', ]
-plot_ts(x, area = 'Korea')
+x <- ncov_raw$area[, c("countryEnglishName", "countryName", "date", "confirmedCount", 
+    "curedCount", "deadCount")] \%>\% roup_by(countryEnglishName, date) \%>\% 
+    summarise(confirmed = sum(confirmedCount), cured = sum(curedCount), 
+        dead = sum(deadCount)) \%>\% ungroup()
+x <- x[!is.na(x$countryEnglishName) & !x$countryEnglishName == "China", 
+    ]
+plot_ts(x, area = "Korea")
 }

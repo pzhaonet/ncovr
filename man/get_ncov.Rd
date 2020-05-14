@@ -5,7 +5,7 @@
 \title{Get NCoV data}
 \usage{
 get_ncov(
-  method = c("ncovr", "tidy", "api", "china", "csv"),
+  method = c("ncovr", "tidy", "api", "china", "csv", "json"),
   port = c("area", "overall", "news", "rumors"),
   base = "https://lab.isaaclin.cn/nCoV/api/",
   if_en = FALSE
@@ -25,5 +25,14 @@ a list
 Get NCoV data
 }
 \examples{
-get_ncov('overall')
+get_ncov("overall")
+
+us_current <- ncovr::get_ncov(method = "api", port = "v1/states/current.json", 
+    base = "https://covidtracking.com/api/")
+
+ports <- c("v1/states/current.json", "v1/states/daily.json", 
+    "v1/states/info.json", "v1/us/current.json", "v1/us/daily.json", 
+    "v1/urls.json", "v1/states/screenshots.json")
+us <- ncovr::get_ncov(method = "api", port = ports, 
+    base = "https://covidtracking.com/api/")
 }

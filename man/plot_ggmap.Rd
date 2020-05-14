@@ -42,18 +42,18 @@ choose_date <- "2020-02-10"
 x <- ncov$area[ncov$area$date <= as.Date(choose_date), ]
 x <- x[!duplicated(x$provinceName), ]
 plot_ggmap(x)
-plot_ggmap(x, province_language = "english", show_capitials = TRUE) +
-  annotate(geom = "text", 105, y = 35, label = "ncov2020.org", color = "white",
-           fontface = "bold", size = 10, alpha = 0.5)
+plot_ggmap(x, province_language = "english", show_capitials = TRUE) + 
+    annotate(geom = "text", 105, y = 35, label = "ncov2020.org", color = "white", 
+        fontface = "bold", size = 10, alpha = 0.5)
 
 library(animation)
 ncov_dates <- as.character(rev(unique(ncov$area$date)))
 ani.options(interval = 0.5, ani.width = 1000, ani.height = 600)
 saveGIF({
-  for (i in rev(ncov_dates)) {
-    x <- ncov$area[ncov$area$date <= as.Date(i), ]
-    x <- x[!duplicated(x$provinceName), ]
-    print(plot_ggmap(x,))
-  }
+    for (i in rev(ncov_dates)) {
+        x <- ncov$area[ncov$area$date <= as.Date(i), ]
+        x <- x[!duplicated(x$provinceName), ]
+        print(plot_ggmap(x, ))
+    }
 }, movie.name = "map_animation.gif")
 }
