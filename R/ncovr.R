@@ -17,7 +17,24 @@ conv_firstletter <- function(x){
 #'
 #' @examples
 #' get_ncov('overall')
-get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
+#'
+#' us_current <- ncovr::get_ncov(
+#' method = "api",
+#' port = "v1/states/current.json",
+#' base = "https://covidtracking.com/api/")
+#'
+#'ports <- c("v1/states/current.json",
+#'"v1/states/daily.json",
+#'"v1/states/info.json",
+#'"v1/us/current.json",
+#'"v1/us/daily.json",
+#'"v1/urls.json",
+#'"v1/states/screenshots.json")
+#' us <- ncovr::get_ncov(
+#'  method = "api",
+#'  port = ports,
+#'  base = "https://covidtracking.com/api/")
+get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv', 'json'),
                      port = c('area', 'overall', 'news', 'rumors'),
                      base = 'https://lab.isaaclin.cn/nCoV/api/',
                      if_en = FALSE){
@@ -44,7 +61,11 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
                    function(x) {
                      get_raw <- httr::GET(paste0(base, x))
                      get_text <- httr::content(get_raw, "text")
-                     y <- jsonlite::fromJSON(get_text)$results
+                     if(base == 'https://lab.isaaclin.cn/nCoV/api/') {
+                       y <- jsonlite::fromJSON(get_text)$results
+                     } else{
+                       y <- jsonlite::fromJSON(get_text)
+                       }
                      if(grepl('area', x)) {
                        dic_city <-  readr::read_csv(system.file('china_city_list.csv', package = 'ncovr'))
                        y$province_en <- dic_city[match(y$provinceShortName, dic_city$Province), 'Province_EN']
@@ -64,7 +85,27 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
     port_upper <- conv_firstletter(port)
     ncov <- lapply(port_upper,
                    function(x) {
-                     readr::read_csv(paste0('https://raw.githubusercontent.com/BlankerL/DXY-2019-nCoV-Data/master/csv/DXY', x,'.csv'))
+                     print(x)
+                     if(x == "News"){
+                       x_news <- readr::read_csv(paste0('https://raw.githubusercontent.com/BlankerL/DXY-2019-nCoV-Data/master/csv/DXY', x, '.csv'), col_names = FALSE)
+                       names(x_news) <- unlist(x_news[1, ])
+                       x_news[-1, ]
+                     } else if (x == "Overall") {
+                       readr::read_csv(paste0('https://raw.githubusercontent.com/BlankerL/DXY-2019-nCoV-Data/master/csv/DXY', x,'.csv'), n_max = 1)
+                     } else {
+                       readr::read_csv(paste0('https://raw.githubusercontent.com/BlankerL/DXY-2019-nCoV-Data/master/csv/DXY', x,'.csv'))
+                     }
+                   }
+    )
+    names(ncov) <- port
+  }
+
+  if(method == 'json') {
+    port_upper <- conv_firstletter(port)
+    ncov <- lapply(port_upper,
+                   function(x) {
+                     print(x)
+                     jsonlite::fromJSON(paste0('https://raw.githubusercontent.com/BlankerL/DXY-2019-nCoV-Data/master/json/DXY', x,'.json'))$results
                    }
     )
     names(ncov) <- port
@@ -73,33 +114,60 @@ get_ncov <- function(method = c('ncovr', 'tidy', 'api', 'china', 'csv'),
 }
 
 
+#' Wrapper for downloading US data
+#'
+#' @param ports ports
+#'
+#' @return a list
+#' @export
+#'
+#' @examples
+#' us <- get_us("us_current")
+#' us <- get_us("states_daily")
+#' us <- get_us()
+get_us <- function(ports = c("states_current",
+                             "states_daily",
+                             "states_info",
+                             "states_screenshots",
+                             "us_current",
+                             "us_daily",
+                             "urls")){
+  ports_json <- paste0("v1/", gsub("_", "/", ports), ".json")
+
+  us <- ncovr::get_ncov(
+    method = "api",
+    port = ports_json,
+    base = "https://covidtracking.com/api/")
+  names(us) <- ports
+  us
+}
+
 conv_ncov <- function(ncov){
-  dic_city <-  readr::read_csv(system.file('china_city_list.csv', package = 'ncovr'))
+  # dic_city <-  readr::read_csv(system.file('china_city_list.csv', package = 'ncovr'))
 
   # convert time stamps
-  ncov$area$updateTime <- conv_time(ncov$area$updateTime)
-  ncov$area$createTime <- conv_time(ncov$area$createTime)
-  ncov$area$modifyTime <- conv_time(ncov$area$modifyTime)
+  for(i in c("updateTime", "createTime", "modifyTime")){
+    if(i %in% names(ncov$area))
+      ncov$area[, i] <- conv_time(ncov$area[, i])
+  }
   ncov$overall$updateTime <- conv_time(ncov$overall$updateTime)
 
   # convert area into city
+  # ncov_area2 <- ncov_area
   ncov_area <- ncov$area
   for(i in 1:nrow(ncov_area)){
-    if(!is.null(ncov_area$cities[i][[1]])){
-      ncov_area$cities[i][[1]]$country <- ncov_area$country[i]
-      ncov_area$cities[i][[1]]$provinceName <- ncov_area$provinceName[i]
-      ncov_area$cities[i][[1]]$provinceShortName <- ncov_area$provinceShortName[i]
-      ncov_area$cities[i][[1]]$updateTime <- ncov_area$updateTime[i]
-      ncov_area$cities[i][[1]]$createTime <- ncov_area$createTime[i]
-      ncov_area$cities[i][[1]]$modifyTime <- ncov_area$modifyTime[i]
-      ncov_area$cities[i][[1]]$province_en <- unlist(dic_city[match(ncov_area$provinceShortName[i], dic_city$Province), 'Province_EN'])
+    # here
+    if(!is.null(ncov_area$cities[i][[1]]) & length(ncov_area$cities[i][[1]]) != 0){
+      # if(!is.null(ncov_area$cities[i][[1]]) & length(ncov_area$cities[i][[1]]) != 0){
+      for(newcol in names(ncov_area)[!names(ncov_area) %in% c('cityName', 'currentConfirmedCount', 'confirmedCount', 'suspectedCount', 'curedCount', 'deadCount', 'locationId', 'cityEnglishName')])
+      ncov_area$cities[i][[1]][, newcol] <- ncov_area[i, newcol]
     }
   }
-  ncov$area <- dplyr::bind_rows(ncov_area$cities)
+  ncov$area <-
+    dplyr::bind_rows(ncov_area$cities)
   ncov$area$city_en <- unlist(dic_city[match(ncov$area$cityName, dic_city$City), 'City_EN'])
   ncov
 }
-
 
 ##' @title Load amap to leaflet
 ##'

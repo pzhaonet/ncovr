@@ -1,12 +1,12 @@
 Package: ncovr
-Version: 0.0.8
-Date: 2020-02-12
+Version: 0.0.11
+Date: 2020-05-12
 Title: Read and process nCoV data
 Authors@R: c(
     person("Peng", "Zhao", role = c("aut", "cre"), email = "pzhao@pzhao.net"),
     person("Yi", "Zou", role = "aut"),
     person("Lei", "Han", role = "aut"),
-    person("Xinyuan", "Chu", role = "ctb")
+    person("Xinyuan", "Chu", role = "aut")
   )
 Maintainer: Peng Zhao <pzhao@pzhao.net>
 Depends: R (>= 3.5.0)
@@ -24,13 +24,14 @@ Imports:
     ggplot2,
     rnaturalearth,
     rnaturalearthhires
-Remotes: yiluheihei/leafletCN,
+Remotes: 
+    yiluheihei/leafletCN,
     ropensci/rnaturalearthhires
 Description: Read and process nCoV data
 License: GPL-3 | file LICENSE
 URL: https://github.com/pzhaonet/ncovr
 BugReports: https://github.com/pzhaonet/ncovr/issues
 SystemRequirements: pandoc (>= 2.0; https://pandoc.org)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 NeedsCompilation: no
 LazyData: true
